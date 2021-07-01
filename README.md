@@ -26,34 +26,16 @@ Canadian Epigenomes dataset
 
 http://www.epigenomes.ca/site-data
 
-Colorectal samples, normal and diseased
+Colorectal samples:
+- Tumor
+- Tumor Adjacent
+- Normal
 
 ![image](https://github.com/GiulioSP/2018Epigenomics/blob/main/new_files/data_breakdown.png)
 
-![image](GiulioSP/2018Epigenomics/blob/main/new_files/data_breakdown.png)
+Note that the download tracks are tagged with "<a ...>", so some browsers cannot download them. If this is the case, one fix is to add the following text in the HTML code of the page before the closing tag "</a>"
+"Track <i class="icon-download" style="padding-top:10px;padding-left:10px;"></i> 	"
 
-![image](2018Epigenomics/blob/main/new_files/data_breakdown.png)
-
-![image](blob/main/new_files/data_breakdown.png)
-
-![image](main/new_files/data_breakdown.png)
-
-![image](./2018Epigenomics/new_files/data_breakdown.png)
-
-![image info](./new_files/data_breakdown.png)
-
-![image info](./2018Epigenomics/new_files/data_breakdown.png)
-
-![image info](/2018Epigenomics/new_files/data_breakdown.png)
-
-![image](new_files/data_breakdown.png)
-
-![image info](new_files/data_breakdown.png)
-
-
-
-
-https://github.com/GiulioSP/2018Epigenomics/blob/main/new%20files/data_breakdown.png
 
 
 ## Glossary:
