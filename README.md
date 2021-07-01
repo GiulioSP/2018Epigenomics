@@ -38,7 +38,9 @@ Colorectal samples, normal and diseased
 
 ![image](main/new_files/data_breakdown.png)
 
-![image](new_files/data_breakdown.png)
+![image](./new_files/data_breakdown.png)
+
+![image info](./new_files/data_breakdown.png)
 
 
 
