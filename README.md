@@ -25,6 +25,7 @@ Late upload of work done in 2018 for the Hirst lab at UBC.
 Canadian Epigenomes dataset
 
 http://www.epigenomes.ca/site-data
+In order to download data, select desired datasets and click "Download Tracks", then open each relevant track as a tab with your browser, right click and select "Save Page As ...".
 
 Colorectal samples:
 - Tumor
@@ -37,19 +38,14 @@ Grouping samples by type and patient:
 
 | Patient code | Tumor sample | Tumor adjacent sample | Normal sample |
 | :----: | :----: | :----: | :----: |
-| AKCC46 | CEMT0062 | CEMT0052 | CEMT0034 | *used as example data
+| AKCC46 | CEMT0062 | CEMT0052 | CEMT0034 | 
 | AKCC52 | CEMT0063 | CEMT0053 | CEMT0033 | 
 | AKCC58 | CEMT0064 | CEMT0055 | CEMT0054 | 
 | AKCC63 | CEMT0065 | CEMT0057 | CEMT0056 | 
 | AKCC70 | CEMT0066 | CEMT0059 | CEMT0058 | 
 | AKCC55 | CEMT0067 | CEMT0061 | CEMT0060 | 
 
-
-
-In order to download data, open it with your browser, right click and select "Save Page As ...".
-
-
-
+Datasets from patient AKCC46 are saved in repo as example data.
 
 
 ## Glossary:
