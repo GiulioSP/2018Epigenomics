@@ -47,6 +47,28 @@ Grouping samples by type and patient:
 
 Datasets from patient AKCC46 are saved in repo as example data.
 
+## Scripts:
+- [._count_analysis_P6.Rmd](https://github.com/GiulioSP/2018Epigenomics/._count_analysis_P6.Rmd)
+- ._count_analysis_tum.Rmd
+- ._cpgToDmrByRegion.3files.sh
+- ._cpgToDmrByRegion.6files.sh
+- ._finderToChipByRegion.sh
+- ._vcfToVcfByRegion.sh
+- cgiToCgiByRegion.sh
+- count_analysis_P6.Rmd
+- count_analysis_tum.Rmd
+- cpgToDmrByRegion.3files.sh
+- cpgToDmrByRegion.6files.sh
+- finderToChipByRegion.sh
+- vcfContrast.sh
+- vcfToVcfByRegion.sh
+
+## Analyses:
+- countAnalysis.plots.xlsx 
+- Lab Meeting - Aug 13th.pptx
+- Lab Meeting - Aug 22.pptx
+- Lab Meeting - July 4th.pptx
+
 
 ## Glossary:
 - hg38 -> reference sequence for the human genome, build version 38
