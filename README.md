@@ -46,6 +46,11 @@ Colorectal samples, normal and diseased
 
 ![image info](/2018Epigenomics/new_files/data_breakdown.png)
 
+![image](data_breakdown.png)
+
+![image info](data_breakdown.png)
+
+
 
 
 https://github.com/GiulioSP/2018Epigenomics/blob/main/new%20files/data_breakdown.png
