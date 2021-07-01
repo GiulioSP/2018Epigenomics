@@ -48,7 +48,7 @@ Grouping samples by type and patient:
 Datasets from patient AKCC46 are saved in repo as example data.
 
 ## Scripts:
-- [._count_analysis_P6.Rmd](https://github.com/GiulioSP/2018Epigenomics/._count_analysis_P6.Rmd)
+- [._count_analysis_P6.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/._count_analysis_P6.Rmd)
 - ._count_analysis_tum.Rmd
 - ._cpgToDmrByRegion.3files.sh
 - ._cpgToDmrByRegion.6files.sh
