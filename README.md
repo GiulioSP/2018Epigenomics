@@ -25,7 +25,7 @@ Late upload of work done in 2018 for the Hirst lab at UBC.
 Canadian Epigenomes dataset
 http://www.epigenomes.ca/site-data
 Colorectal samples, normal and diseased
-![alt text](https://github.com/GiulioSP/2018Epigenomics/blob/main/data_breakdown.jpg?raw=true)
+![alt text](https://github.com/GiulioSP/2018Epigenomics/blob/main/new_files/data_breakdown.jpg?raw=true)
 
 
 ## Glossary:
