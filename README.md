@@ -48,20 +48,20 @@ Grouping samples by type and patient:
 Datasets from patient AKCC46 are saved in repo as example data.
 
 ## Scripts:
-- [._count_analysis_P6.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/._count_analysis_P6.Rmd)
-- ._count_analysis_tum.Rmd
-- ._cpgToDmrByRegion.3files.sh
-- ._cpgToDmrByRegion.6files.sh
-- ._finderToChipByRegion.sh
-- ._vcfToVcfByRegion.sh
-- cgiToCgiByRegion.sh
-- count_analysis_P6.Rmd
-- count_analysis_tum.Rmd
-- cpgToDmrByRegion.3files.sh
-- cpgToDmrByRegion.6files.sh
-- finderToChipByRegion.sh
-- vcfContrast.sh
-- vcfToVcfByRegion.sh
+- [._count_analysis_P6.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/._count_analysis_P6.Rmd):
+- [._count_analysis_tum.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/._count_analysis_tum.Rmd):
+- [._cpgToDmrByRegion.3files.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/._cpgToDmrByRegion.3files.sh):
+- [._cpgToDmrByRegion.6files.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/._cpgToDmrByRegion.6files.sh):
+- [._finderToChipByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/._finderToChipByRegion.sh):
+- [._vcfToVcfByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/._vcfToVcfByRegion.sh):
+- [cgiToCgiByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/cgiToCgiByRegion.sh):
+- [count_analysis_P6.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/count_analysis_P6.Rmd):
+- [count_analysis_tum.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/count_analysis_tum.Rmd):
+- [cpgToDmrByRegion.3files.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/cpgToDmrByRegion.3files.sh):
+- [cpgToDmrByRegion.6files.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/cpgToDmrByRegion.6files.sh):
+- [finderToChipByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/finderToChipByRegion.sh):
+- [vcfContrast.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/vcfContrast.sh):
+- [vcfToVcfByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/vcfToVcfByRegion.sh):
 
 ## Analyses:
 - countAnalysis.plots.xlsx 
