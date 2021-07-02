@@ -55,13 +55,14 @@ Datasets from patient AKCC46 are saved in repo as example data.
 - [._finderToChipByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/._finderToChipByRegion.sh):
 - [._vcfToVcfByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/._vcfToVcfByRegion.sh):
 - [cgiToCgiByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/cgiToCgiByRegion.sh):
-- [count_analysis_P6.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/count_analysis_P6.Rmd):
-- [count_analysis_tum.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/count_analysis_tum.Rmd):
+- [count_analysis_P6.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/count_analysis_P6.Rmd): R code that aggregates different types of data by region, then plots comparisons and exports results to a .csv file. Set up for P6 (patient 6 in my analysis, AKCC55). Tweak file names for a different patient's datasets. Used to gleam insights into cancer evolution, but noting epigenetic and genetic factors that are different between normal, tumor adjacent and tumor samples.
+- [count_analysis_tum.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/count_analysis_tum.Rmd): R code that aggregates all data from tumor samples by region, then plots comparisons and exports results to a .csv file. 
 - [cpgToDmrByRegion.3files.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/cpgToDmrByRegion.3files.sh):
 - [cpgToDmrByRegion.6files.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/cpgToDmrByRegion.6files.sh):
 - [finderToChipByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/finderToChipByRegion.sh):
-- [vcfContrast.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/vcfContrast.sh):
-- [vcfToVcfByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/vcfToVcfByRegion.sh):
+- [vcfContrast.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/vcfContrast.sh): Contrasts VCF files to isolate variants unique to the main sample (the first in fileList). Can apply filters for higher specificity, at the cost of sensitivity, when -specif is added.
+- [vcfToVcfByRegion.sh](https://github.com/GiulioSP/2018Epigenomics/blob/main/vcfToVcfByRegion.sh): Creates vcfByRegion file, which parses genome into same sized chunks ("size"), and reports the chunks where one or more variant calls are present, in the format: "chr:positionStart:positionEnd",  "adjustedResidual/max(adjustedResidual)", and "chiSquare". Requires enrichment BED file: FindER.bed.gz.3col.sorted.
+
 
 ## Analyses:
 - countAnalysis.plots.xlsx 
