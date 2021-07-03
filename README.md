@@ -36,6 +36,10 @@ Datasets from patient AKCC46 are saved in repo as example data.
 - CPG: Pre-processed WGBS data that lists all methylated Cytosines along with position. 
 - dmrByRegion: Original data format that splits the genome into small regions and counts the amount of methylated Cytosines in each region. Then, compares between samples to identify differentially methylated regions (DMRs) according to a Chi Squared test. Done with scripts cpgToDmrByRegion.3files.sh and cpgToDmrByRegion.6files.sh.  
 
+### GpG Island data
+- CGI: A list of regions considered to be CpG islands in a given genome build (in this case, hg38). These regions are rich in the sequence "CG", which is the most common sequence for a methylated Cytosine; they are usually associated with the upstream of genes and serve a regulatory function, whereas fully methylated CGIs suppress expression (or at least transcription factor binding), and unmethylated CGIs promote expression (or at least allow transcription factor binding).    
+- cgiByREgion: Original data format that splits the genome into small regions and notes if a region is considered to be a CGI.
+
 ### Hystone Modification data
 - ChIP-seq: Sequencing data after a step of chromatin immunoprecipitation (ChIP) that should repress genetic signal of regular DNA and amplify signal near a targeted protein. In this case, the targeted proteins are a set of common histone modifications. 
 - FindER: Absolute measurement of histone modification enrichment detected. Generated from ChIP-Seq data by the CEEHRC's FindER package.  
@@ -73,8 +77,14 @@ Select pages from document "Lab Meeting - Aug 22nd.pptx"
 <kbd> ![ppt_data_tables](/new_files/ppt_data_tables.PNG) </kbd>
 <kbd> ![ppt_analysis](/new_files/ppt_analysis.PNG) </kbd> 
 
+### Results
+Select pages from document "Lab Meeting - Aug 22nd.pptx"
 
-![ppt_hypomutated](/new_files/ppt_hypomutated.PNG)
+#### Sanity checks and Validation results
+Tumors of patients 5 and 6 are considered "hypomutated", as they have significantly less variant calls than would be expected, especially considering the biological baseline (the amount of variant calls that are unique between normal and tumor adjacent samples, which may be real mutations or false positives). 
+Hypomutated tumors are worth studying, but their data cannot be compared directly with other samples.
+<kbd> ![ppt_hypomutated](/new_files/ppt_hypomutated.PNG) </kbd>
+
 
 
 
