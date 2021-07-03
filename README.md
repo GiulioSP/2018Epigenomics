@@ -64,6 +64,10 @@ Datasets from patient AKCC46 are saved in repo as example data.
 - Lab Meeting - Aug 22.pptx
 - Lab Meeting - July 4th.pptx
 
-![ppt_how](github.com/GiulioSP/2018Epigenomics/tree/main/new_files/ppt_how.png)
+![ppt_how](/new_files/ppt_how.png)
+![ppt_how](./new_files/ppt_how.png)
 
+![ppt_what](/new_files/ppt_what.png)
+
+![GitHub Logo](/images/github-logo.png)
 
