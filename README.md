@@ -81,9 +81,33 @@ Select pages from document "Lab Meeting - Aug 22nd.pptx"
 Select pages from document "Lab Meeting - Aug 22nd.pptx"
 
 #### Sanity checks and Validation results
-Tumors of patients 5 and 6 are considered "hypomutated", as they have significantly less variant calls than would be expected, especially considering the biological baseline (the amount of variant calls that are unique between normal and tumor adjacent samples, which may be real mutations or false positives). 
+
+Tumors of patients  5 and 6 are considered "hypomutated", as they have significantly less variant calls than would be expected, especially considering the biological baseline (the amount of variant calls that are unique between normal and tumor adjacent samples, which may be real mutations or false positives). 
 Hypomutated tumors are worth studying, but their data cannot be compared directly with other samples.
+Number of mutations (variant calls) from each sample:
 <kbd> ![ppt_hypomutated](/new_files/ppt_hypomutated.PNG) </kbd>
+
+As expected, the amount of unique mutations (not in any list of variants within BCFTools package) is higher for some tumor samples. 
+<kbd> ![ppt_tummutation](/new_files/ppt_tummutation.PNG) </kbd>
+
+As expected, most DMRs (differentially methylated regions) are unique to tumors, whereas normal and tumor adjacent samples are most similar. Further, the hypo or hypermethylation profile of DMRs is different for regions considered to be CGIs, as they carry the methylation signal differently. 
+<kbd> ![ppt_tumdmr1](/new_files/ppt_tumdmr1.PNG) </kbd>
+<kbd> ![ppt_tumdmr2](/new_files/ppt_tumdmr2.PNG) </kbd>
+<kbd> ![ppt_tumdmr3](/new_files/ppt_tumdmr3.PNG) </kbd>
+<kbd> ![ppt_tumdmr4](/new_files/ppt_tumdmr4.PNG) </kbd>
+
+Furthermore, tumors 5 and 6 behave differently as they are undermutated. Since they contain less DMRs than expected, this indicates support to models 1 and 2, where a less mutated sample would have less changes in gene expression and thus less changes in methylation profile (model 1) or less visible genic signals for methylation or demethylation (model 2). 
+<kbd> ![ppt_tumdmr5](/new_files/ppt_tumdmr5.PNG) </kbd>
+<kbd> ![ppt_tumdmr6](/new_files/ppt_tumdmr6.PNG) </kbd>
+
+
+
+#### The Cancer's Epigenome
+The amount of DMRs varies by grouping and patient, but the amount of variant regions between cancer samples is small, indicating support to model 4, where mutations in genes coding for epigenetic machinery cause global dysruption to the methylome.  
+<kbd> ![ppt_dmr](/new_files/ppt_dmr.PNG) </kbd>
+
+
+
 
 
 
