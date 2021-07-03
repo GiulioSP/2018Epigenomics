@@ -1,0 +1,711 @@
+---
+title: "count_analysis_tum.Rmd"
+author: "GSP"
+date: '2018-08-21'
+output: html_document
+---
+
+## 1. Importing libraries and data
+
+# 1.1. libraries
+```{r echo=TRUE}
+require(data.table)
+library(stringr)
+library(gsubfn)
+```
+
+# 1.2. DMR = differentially methylated regions
+```{r echo=TRUE}
+DMR<-read.csv("~/Desktop/Giulio/WGBS/cov400/DMRTum.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(DMR)[2:7]<-c("DMR62", "DMR63", "DMR64", "DMR65", "DMR66", "DMR67")
+```
+
+# 1.3. CGI positions
+```{r echo=TRUE}
+require(data.table)
+CGI <- fread("~/Desktop/Giulio/CGIByRegion.txt", sep = "\t", header= TRUE, stringsAsFactors=FALSE)
+```
+
+# 1.4. vcfByRegion
+```{r echo=TRUE}
+VCF<-list()
+
+VCF[[1]]<-fread("~/Desktop/Giulio/VCF/vcfByRegion/62.vcfByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(VCF)[1]<-"vcf62"
+names(VCF[[1]])[2]<-"vcf62"
+VCF[[2]]<-fread("~/Desktop/Giulio/VCF/vcfByRegion/63.vcfByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(VCF)[2]<-"vcf63"
+names(VCF[[2]])[2]<-"vcf63"
+VCF[[3]]<-fread("~/Desktop/Giulio/VCF/vcfByRegion/64.vcfByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(VCF)[3]<-"vcf64"
+names(VCF[[3]])[2]<-"vcf64"
+VCF[[4]]<-fread("~/Desktop/Giulio/VCF/vcfByRegion/65.vcfByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(VCF)[4]<-"vcf65"
+names(VCF[[4]])[2]<-"vcf65"
+VCF[[5]]<-fread("~/Desktop/Giulio/VCF/vcfByRegion/66.vcfByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(VCF)[5]<-"vcf66"
+names(VCF[[5]])[2]<-"vcf66"
+VCF[[6]]<-fread("~/Desktop/Giulio/VCF/vcfByRegion/67.vcfByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(VCF)[6]<-"vcf67"
+names(VCF[[6]])[2]<-"vcf67"
+```
+
+# 1.5. ChIP
+```{r}
+ChIP<-list()
+
+ChIP[[1]]<-fread("~/Desktop/Giulio/ChIP/62.H3K27ac.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[1]<-"62_H3K27ac"
+names(ChIP[[1]])[2]<-"62_H3K27ac"
+ChIP[[2]]<-fread("~/Desktop/Giulio/ChIP/62.H3K27me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[2]<-"62_H3K27me3"
+names(ChIP[[2]])[2]<-"62_H3K27me3"
+ChIP[[3]]<-fread("~/Desktop/Giulio/ChIP/62.H3K36me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[3]<-"62_H3K36me3"
+names(ChIP[[3]])[2]<-"62_H3K36me3"
+ChIP[[4]]<-fread("~/Desktop/Giulio/ChIP/62.H3K4me1.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[4]<-"62_H3K4me1"
+names(ChIP[[4]])[2]<-"62_H3K4me1"
+ChIP[[5]]<-fread("~/Desktop/Giulio/ChIP/62.H3K4me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[5]<-"62_H3K4me3"
+names(ChIP[[5]])[2]<-"62_H3K4me3"
+ChIP[[6]]<-fread("~/Desktop/Giulio/ChIP/62.H3K9me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[6]<-"62_H3K9me3"
+names(ChIP[[6]])[2]<-"62_H3K9me3"
+  
+ChIP[[7]]<-fread("~/Desktop/Giulio/ChIP/63.H3K27ac.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[7]<-"63_H3K27ac"
+names(ChIP[[7]])[2]<-"63_H3K27ac"
+ChIP[[8]]<-fread("~/Desktop/Giulio/ChIP/63.H3K27me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[8]<-"63_H3K27me3"
+names(ChIP[[8]])[2]<-"63_H3K27me3"
+ChIP[[9]]<-fread("~/Desktop/Giulio/ChIP/63.H3K36me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[9]<-"63_H3K36me3"
+names(ChIP[[9]])[2]<-"63_H3K36me3"
+ChIP[[10]]<-fread("~/Desktop/Giulio/ChIP/63.H3K4me1.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[10]<-"63_H3K4me1"
+names(ChIP[[10]])[2]<-"63_H3K4me1"
+ChIP[[11]]<-fread("~/Desktop/Giulio/ChIP/63.H3K4me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[11]<-"63_H3K4me3"
+names(ChIP[[11]])[2]<-"63_H3K4me3"
+ChIP[[12]]<-fread("~/Desktop/Giulio/ChIP/63.H3K9me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[12]<-"63_H3K9me3"
+names(ChIP[[12]])[2]<-"63_H3K9me3"
+
+ChIP[[13]]<-fread("~/Desktop/Giulio/ChIP/64.H3K27ac.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[13]<-"64_H3K27ac"
+names(ChIP[[13]])[2]<-"64_H3K27ac"
+ChIP[[14]]<-fread("~/Desktop/Giulio/ChIP/64.H3K27me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[14]<-"64_H3K27me3"
+names(ChIP[[14]])[2]<-"64_H3K27me3"
+ChIP[[15]]<-fread("~/Desktop/Giulio/ChIP/64.H3K36me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[15]<-"64_H3K36me3"
+names(ChIP[[15]])[2]<-"64_H3K36me3"
+ChIP[[16]]<-fread("~/Desktop/Giulio/ChIP/64.H3K4me1.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[16]<-"64_H3K4me1"
+names(ChIP[[16]])[2]<-"64_H3K4me1"
+ChIP[[17]]<-fread("~/Desktop/Giulio/ChIP/64.H3K4me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[17]<-"64_H3K4me3"
+names(ChIP[[17]])[2]<-"64_H3K4me3"
+ChIP[[18]]<-fread("~/Desktop/Giulio/ChIP/64.H3K9me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[18]<-"64_H3K9me3"
+names(ChIP[[18]])[2]<-"64_H3K9me3"
+
+ChIP[[19]]<-fread("~/Desktop/Giulio/ChIP/65.H3K27ac.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[19]<-"65_H3K27ac"
+names(ChIP[[19]])[2]<-"65_H3K27ac"
+ChIP[[20]]<-fread("~/Desktop/Giulio/ChIP/65.H3K27me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[20]<-"65_H3K27me3"
+names(ChIP[[20]])[2]<-"65_H3K27me3"
+ChIP[[21]]<-fread("~/Desktop/Giulio/ChIP/65.H3K36me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[21]<-"65_H3K36me3"
+names(ChIP[[21]])[2]<-"65_H3K36me3"
+ChIP[[22]]<-fread("~/Desktop/Giulio/ChIP/65.H3K4me1.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[22]<-"65_H3K4me1"
+names(ChIP[[22]])[2]<-"65_H3K4me1"
+ChIP[[23]]<-fread("~/Desktop/Giulio/ChIP/65.H3K4me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[23]<-"65_H3K4me3"
+names(ChIP[[23]])[2]<-"65_H3K4me3"
+ChIP[[24]]<-fread("~/Desktop/Giulio/ChIP/65.H3K9me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[24]<-"65_H3K9me3"
+names(ChIP[[24]])[2]<-"65_H3K9me3"
+
+ChIP[[25]]<-fread("~/Desktop/Giulio/ChIP/66.H3K27ac.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[25]<-"66_H3K27ac"
+names(ChIP[[25]])[2]<-"66_H3K27ac"
+ChIP[[26]]<-fread("~/Desktop/Giulio/ChIP/66.H3K27me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[26]<-"66_H3K27me3"
+names(ChIP[[26]])[2]<-"66_H3K27me3"
+ChIP[[27]]<-fread("~/Desktop/Giulio/ChIP/66.H3K36me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[27]<-"66_H3K36me3"
+names(ChIP[[27]])[2]<-"66_H3K36me3"
+ChIP[[28]]<-fread("~/Desktop/Giulio/ChIP/66.H3K4me1.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[28]<-"66_H3K4me1"
+names(ChIP[[28]])[2]<-"66_H3K4me1"
+ChIP[[29]]<-fread("~/Desktop/Giulio/ChIP/66.H3K4me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[29]<-"66_H3K4me3"
+names(ChIP[[29]])[2]<-"66_H3K4me3"
+ChIP[[30]]<-fread("~/Desktop/Giulio/ChIP/66.H3K9me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[30]<-"66_H3K9me3"
+names(ChIP[[30]])[2]<-"66_H3K9me3"
+
+ChIP[[31]]<-fread("~/Desktop/Giulio/ChIP/67.H3K27ac.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[31]<-"67_H3K27ac"
+names(ChIP[[31]])[2]<-"67_H3K27ac"
+ChIP[[32]]<-fread("~/Desktop/Giulio/ChIP/67.H3K27me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[32]<-"67_H3K27me3"
+names(ChIP[[32]])[2]<-"67_H3K27me3"
+ChIP[[33]]<-fread("~/Desktop/Giulio/ChIP/67.H3K36me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[33]<-"67_H3K36me3"
+names(ChIP[[33]])[2]<-"67_H3K36me3"
+ChIP[[34]]<-fread("~/Desktop/Giulio/ChIP/67.H3K4me1.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[34]<-"67_H3K4me1"
+names(ChIP[[34]])[2]<-"67_H3K4me1"
+ChIP[[35]]<-fread("~/Desktop/Giulio/ChIP/67.H3K4me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[35]<-"67_H3K4me3"
+names(ChIP[[35]])[2]<-"67_H3K4me3"
+ChIP[[36]]<-fread("~/Desktop/Giulio/ChIP/67.H3K9me3.chipByRegion.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
+names(ChIP)[36]<-"67_H3K9me3"
+names(ChIP[[36]])[2]<-"67_H3K9me3"
+```
+
+
+## 2. Preparing the comparison platform
+
+# 2.1. Merge VCF, CGI and ChIP-seq with DMR data
+```{r}
+comparisonTum <- DMR[,1:(ncol(DMR)-1)]
+
+for (i in 1:length(VCF)){
+comparisonTum<-merge(comparisonTum, VCF[[i]], by=1, all.x=T)}
+comparisonTum[is.na(comparisonTum)] <- "-"
+
+for (i in 1:length(ChIP)){
+comparisonTum<-merge(comparisonTum, ChIP[[i]], by=1, all.x=T)}
+comparisonTum<-merge(comparisonTum, CGI, by=1, all.x=T)
+comparisonTum[is.na(comparisonTum)] <- 0
+```
+
+# 2.2. Export dataset
+```{r}
+write.table(comparisonTum,"/Users/hirstlab/Desktop/Giulio/comparisonTum.txt",sep="\t",row.names=FALSE)
+```
+
+
+# 3. Count Analysis
+
+# 3.1. Create columns annotating information, to expedite computing  
+```{r}
+impact<-c("HIGH", "MODERATE", "LOW", "MODIFIER")
+
+comparisonTum_annotated <- comparisonTum
+#comparisonTum_annotated <- fread("~/Desktop/Giulio/countAnalysis/comparisonTum_annotated.txt", sep = "\t", header= TRUE, stringsAsFactors=FALSE)
+
+#Create unique columns for chromosome, position start and position end. Resort.
+comparisonTum_annotated$chr<-sapply(strsplit(comparisonTum_annotated[,chr.posStart.posEnd],":"), `[`, 1)
+comparisonTum_annotated$posStart<-as.numeric(sapply(strsplit(comparisonTum_annotated[,chr.posStart.posEnd],":"), `[`, 2))
+comparisonTum_annotated$posEnd<-as.numeric(sapply(strsplit(comparisonTum_annotated[,chr.posStart.posEnd],":"), `[`, 3))
+comparisonTum_annotated<-comparisonTum_annotated[order(comparisonTum_annotated$chr, comparisonTum_annotated$posStart),]
+
+#Create columns for info on VCF62
+#number of VCs
+comparisonTum_annotated$vcf62_count<- ifelse(grepl("^\\-$",comparisonTum_annotated$vcf62),0,str_count(comparisonTum_annotated$vcf62,"\\%")+1)
+#has indel mutation
+comparisonTum_annotated$vcf62_indel<- !grepl("^\\-$", comparisonTum_annotated$vcf62)&!grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf62)
+#has SNP mutation
+comparisonTum_annotated$vcf62_snp<- grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf62)
+#has homozygote
+comparisonTum_annotated$vcf62_homo<- grepl("1\\/1",comparisonTum_annotated$vcf62)
+#has heterozygote
+comparisonTum_annotated$vcf62_het<- grepl("0\\/1",comparisonTum_annotated$vcf62)
+#impact on expression
+comparisonTum_annotated$vcf62_impact<- sapply(strapply(comparisonTum_annotated$vcf62, "\\(([a-z,A-Z,0-9,\\_,\\+]*)\\|"), function(y) paste(unique(y), collapse=" "))
+#coding mutation
+comparisonTum_annotated$vcf62_coding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|CODING\\|", comparisonTum_annotated$vcf62)
+#noncoding mutation
+comparisonTum_annotated$vcf62_noncoding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|NON_CODING\\|", comparisonTum_annotated$vcf62)
+
+#Create columns for info on VCF63
+#number of VCs
+comparisonTum_annotated$vcf63_count<- ifelse(grepl("^\\-$",comparisonTum_annotated$vcf63),0,str_count(comparisonTum_annotated$vcf63,"\\%")+1)
+#has indel mutation
+comparisonTum_annotated$vcf63_indel<- !grepl("^\\-$", comparisonTum_annotated$vcf63)&!grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf63)
+#has SNP mutation
+comparisonTum_annotated$vcf63_snp<- grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf63)
+#has homozygote
+comparisonTum_annotated$vcf63_homo<- grepl("1\\/1",comparisonTum_annotated$vcf63)
+#has heterozygote
+comparisonTum_annotated$vcf63_het<- grepl("0\\/1",comparisonTum_annotated$vcf63)
+#impact on expression
+comparisonTum_annotated$vcf63_impact<- sapply(strapply(comparisonTum_annotated$vcf63, "\\(([a-z,A-Z,0-9,\\_,\\+]*)\\|"), function(y) paste(unique(y), collapse=" "))
+#coding mutation
+comparisonTum_annotated$vcf63_coding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|CODING\\|", comparisonTum_annotated$vcf63)
+#noncoding mutation
+comparisonTum_annotated$vcf63_noncoding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|NON_CODING\\|", comparisonTum_annotated$vcf63)
+
+#Create columns for info on VCF64
+#number of VCs
+comparisonTum_annotated$vcf64_count<- ifelse(grepl("^\\-$",comparisonTum_annotated$vcf64),0,str_count(comparisonTum_annotated$vcf64,"\\%")+1)
+#has indel mutation
+comparisonTum_annotated$vcf64_indel<- !grepl("^\\-$", comparisonTum_annotated$vcf64)&!grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf64)
+#has SNP mutation
+comparisonTum_annotated$vcf64_snp<- grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf64)
+#has homozygote
+comparisonTum_annotated$vcf64_homo<- grepl("1\\/1",comparisonTum_annotated$vcf64)
+#has heterozygote
+comparisonTum_annotated$vcf64_het<- grepl("0\\/1",comparisonTum_annotated$vcf64)
+#impact on expression
+comparisonTum_annotated$vcf64_impact<- sapply(strapply(comparisonTum_annotated$vcf64, "\\(([a-z,A-Z,0-9,\\_,\\+]*)\\|"), function(y) paste(unique(y), collapse=" "))
+#coding mutation
+comparisonTum_annotated$vcf64_coding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|CODING\\|", comparisonTum_annotated$vcf64)
+#noncoding mutation
+comparisonTum_annotated$vcf64_noncoding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|NON_CODING\\|", comparisonTum_annotated$vcf64)
+
+#Create columns for info on VCF65
+#number of VCs
+comparisonTum_annotated$vcf65_count<- ifelse(grepl("^\\-$",comparisonTum_annotated$vcf65),0,str_count(comparisonTum_annotated$vcf65,"\\%")+1)
+#has indel mutation
+comparisonTum_annotated$vcf65_indel<- !grepl("^\\-$", comparisonTum_annotated$vcf65)&!grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf65)
+#has SNP mutation
+comparisonTum_annotated$vcf65_snp<- grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf65)
+#has homozygote
+comparisonTum_annotated$vcf65_homo<- grepl("1\\/1",comparisonTum_annotated$vcf65)
+#has heterozygote
+comparisonTum_annotated$vcf65_het<- grepl("0\\/1",comparisonTum_annotated$vcf65)
+#impact on expression
+comparisonTum_annotated$vcf65_impact<- sapply(strapply(comparisonTum_annotated$vcf65, "\\(([a-z,A-Z,0-9,\\_,\\+]*)\\|"), function(y) paste(unique(y), collapse=" "))
+#coding mutation
+comparisonTum_annotated$vcf65_coding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|CODING\\|", comparisonTum_annotated$vcf65)
+#noncoding mutation
+comparisonTum_annotated$vcf65_noncoding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|NON_CODING\\|", comparisonTum_annotated$vcf65)
+
+#Create columns for info on VCF66
+#number of VCs
+comparisonTum_annotated$vcf66_count<- ifelse(grepl("^\\-$",comparisonTum_annotated$vcf66),0,str_count(comparisonTum_annotated$vcf66,"\\%")+1)
+#has indel mutation
+comparisonTum_annotated$vcf66_indel<- !grepl("^\\-$", comparisonTum_annotated$vcf66)&!grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf66)
+#has SNP mutation
+comparisonTum_annotated$vcf66_snp<- grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf66)
+#has homozygote
+comparisonTum_annotated$vcf66_homo<- grepl("1\\/1",comparisonTum_annotated$vcf66)
+#has heterozygote
+comparisonTum_annotated$vcf66_het<- grepl("0\\/1",comparisonTum_annotated$vcf66)
+#impact on expression
+comparisonTum_annotated$vcf66_impact<- sapply(strapply(comparisonTum_annotated$vcf66, "\\(([a-z,A-Z,0-9,\\_,\\+]*)\\|"), function(y) paste(unique(y), collapse=" "))
+#coding mutation
+comparisonTum_annotated$vcf66_coding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|CODING\\|", comparisonTum_annotated$vcf66)
+#noncoding mutation
+comparisonTum_annotated$vcf66_noncoding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|NON_CODING\\|", comparisonTum_annotated$vcf66)
+
+#Create columns for info on VCF67
+#number of VCs
+comparisonTum_annotated$vcf67_count<- ifelse(grepl("^\\-$",comparisonTum_annotated$vcf67),0,str_count(comparisonTum_annotated$vcf67,"\\%")+1)
+#has indel mutation
+comparisonTum_annotated$vcf67_indel<- !grepl("^\\-$", comparisonTum_annotated$vcf67)&!grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf67)
+#has SNP mutation
+comparisonTum_annotated$vcf67_snp<- grepl("^[0-9]+\\|[A,T,C,G]\\|[C,T,G,A](\\,[C,G,T,A])*\\|", comparisonTum_annotated$vcf67)
+#has homozygote
+comparisonTum_annotated$vcf67_homo<- grepl("1\\/1",comparisonTum_annotated$vcf67)
+#has heterozygote
+comparisonTum_annotated$vcf67_het<- grepl("0\\/1",comparisonTum_annotated$vcf67)
+#impact on expression
+comparisonTum_annotated$vcf67_impact<- sapply(strapply(comparisonTum_annotated$vcf67, "\\(([a-z,A-Z,0-9,\\_,\\+]*)\\|"), function(y) paste(unique(y), collapse=" "))
+#coding mutation
+comparisonTum_annotated$vcf67_coding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|CODING\\|", comparisonTum_annotated$vcf67)
+#noncoding mutation
+comparisonTum_annotated$vcf67_noncoding<- grepl("\\([^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|[^\\|]*\\|NON_CODING\\|", comparisonTum_annotated$vcf67)
+
+write.table(comparisonTum_annotated,"/Users/hirstlab/Desktop/Giulio/countAnalysis/comparisonTum_annotated_annotated.txt",sep="\t",row.names=FALSE)
+```
+
+Tum
+```{r}
+comparisonTum_annotated <- fread("~/Desktop/Giulio/countAnalysis/comparisonTum_annotated.txt", sep = "\t", header= TRUE, stringsAsFactors=FALSE)
+
+#absolute counts, as reference to the size of the dataset, allowing for horizontal comparisons with other datasets. Note that P 5 and P 6 are undermutated 
+countAnalysis.Tum<-list()
+#total amount of VCs identified in each sample, and amount of shared VCs amongst all samples of each patient (likely to be genetic variants of that patient)
+
+countAnalysis.Tum[["Tum.62.VC.all"]]<- 4638475
+countAnalysis.Tum[["Tum.63.VC.all"]]<- 4282244
+countAnalysis.Tum[["Tum.64.VC.all"]]<- 4290315
+countAnalysis.Tum[["Tum.65.VC.all"]]<- 4300070
+countAnalysis.Tum[["Tum.66.VC.all"]]<- 4325797
+countAnalysis.Tum[["Tum.67.VC.all"]]<- 4321998
+#all entries in comparison data tables, which include only DMR chunks
+countAnalysis.Tum[["Tum.all"]]<-  nrow(comparisonTum_annotated)
+#amount of entries with CGI flag
+countAnalysis.Tum[["Tum.CGI"]]<- sum(comparisonTum_annotated$is_CGI)
+#amount of entries with 1 and -1 DMR values, as well as amount of >.8 values 
+countAnalysis.Tum[["Tum.62.DMR.is1.pos"]]<- sum(comparisonTum_annotated$DMR62==1)
+countAnalysis.Tum[["Tum.63.DMR.is1.pos"]]<- sum(comparisonTum_annotated$DMR63==1)
+countAnalysis.Tum[["Tum.64.DMR.is1.pos"]]<- sum(comparisonTum_annotated$DMR64==1)
+countAnalysis.Tum[["Tum.65.DMR.is1.pos"]]<- sum(comparisonTum_annotated$DMR65==1)
+countAnalysis.Tum[["Tum.66.DMR.is1.pos"]]<- sum(comparisonTum_annotated$DMR66==1)
+countAnalysis.Tum[["Tum.67.DMR.is1.pos"]]<- sum(comparisonTum_annotated$DMR67==1)
+countAnalysis.Tum[["Tum.62.DMR.is1.neg"]]<- sum(comparisonTum_annotated$DMR62==-1)
+countAnalysis.Tum[["Tum.63.DMR.is1.neg"]]<- sum(comparisonTum_annotated$DMR63==-1)
+countAnalysis.Tum[["Tum.64.DMR.is1.neg"]]<- sum(comparisonTum_annotated$DMR64==-1)
+countAnalysis.Tum[["Tum.65.DMR.is1.neg"]]<- sum(comparisonTum_annotated$DMR65==-1)
+countAnalysis.Tum[["Tum.66.DMR.is1.neg"]]<- sum(comparisonTum_annotated$DMR66==-1)
+countAnalysis.Tum[["Tum.67.DMR.is1.neg"]]<- sum(comparisonTum_annotated$DMR67==-1)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos"]]<- sum(comparisonTum_annotated$DMR62>0.8)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos"]]<- sum(comparisonTum_annotated$DMR63>0.8)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos"]]<- sum(comparisonTum_annotated$DMR64>0.8)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos"]]<- sum(comparisonTum_annotated$DMR65>0.8)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos"]]<- sum(comparisonTum_annotated$DMR66>0.8)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos"]]<- sum(comparisonTum_annotated$DMR67>0.8)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg"]]<- sum(comparisonTum_annotated$DMR62<(-0.8))
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg"]]<- sum(comparisonTum_annotated$DMR63<(-0.8))
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg"]]<- sum(comparisonTum_annotated$DMR64<(-0.8))
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg"]]<- sum(comparisonTum_annotated$DMR65<(-0.8))
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg"]]<- sum(comparisonTum_annotated$DMR66<(-0.8))
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg"]]<- sum(comparisonTum_annotated$DMR67<(-0.8))
+#amount of entries with 1 and -1 DMR values, as well as amount of >.8 values, in CGI context
+countAnalysis.Tum[["Tum.62.DMR.is1.pos.CGI"]]<- sum(comparisonTum_annotated$DMR62==1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.63.DMR.is1.pos.CGI"]]<- sum(comparisonTum_annotated$DMR63==1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.64.DMR.is1.pos.CGI"]]<- sum(comparisonTum_annotated$DMR64==1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.65.DMR.is1.pos.CGI"]]<- sum(comparisonTum_annotated$DMR65==1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.66.DMR.is1.pos.CGI"]]<- sum(comparisonTum_annotated$DMR66==1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.67.DMR.is1.pos.CGI"]]<- sum(comparisonTum_annotated$DMR67==1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.62.DMR.is1.neg.CGI"]]<- sum(comparisonTum_annotated$DMR62==-1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.63.DMR.is1.neg.CGI"]]<- sum(comparisonTum_annotated$DMR63==-1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.64.DMR.is1.neg.CGI"]]<- sum(comparisonTum_annotated$DMR64==-1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.65.DMR.is1.neg.CGI"]]<- sum(comparisonTum_annotated$DMR65==-1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.66.DMR.is1.neg.CGI"]]<- sum(comparisonTum_annotated$DMR66==-1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.67.DMR.is1.neg.CGI"]]<- sum(comparisonTum_annotated$DMR67==-1 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos.CGI"]]<- sum(comparisonTum_annotated$DMR62>0.8 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos.CGI"]]<- sum(comparisonTum_annotated$DMR63>0.8 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos.CGI"]]<- sum(comparisonTum_annotated$DMR64>0.8 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos.CGI"]]<- sum(comparisonTum_annotated$DMR65>0.8 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos.CGI"]]<- sum(comparisonTum_annotated$DMR66>0.8 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos.CGI"]]<- sum(comparisonTum_annotated$DMR67>0.8 & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg.CGI"]]<- sum(comparisonTum_annotated$DMR62<(-0.8) & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg.CGI"]]<- sum(comparisonTum_annotated$DMR63<(-0.8) & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg.CGI"]]<- sum(comparisonTum_annotated$DMR64<(-0.8) & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg.CGI"]]<- sum(comparisonTum_annotated$DMR65<(-0.8) & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg.CGI"]]<- sum(comparisonTum_annotated$DMR66<(-0.8) & comparisonTum_annotated$is_CGI==1)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg.CGI"]]<- sum(comparisonTum_annotated$DMR67<(-0.8) & comparisonTum_annotated$is_CGI==1)
+#amount of VCs and amount of regions with VCs for each sample
+countAnalysis.Tum[["Tum.62.VC"]]<- sum(comparisonTum_annotated$vcf62_count!=0)
+countAnalysis.Tum[["Tum.63.VC"]]<- sum(comparisonTum_annotated$vcf63_count!=0)
+countAnalysis.Tum[["Tum.64.VC"]]<- sum(comparisonTum_annotated$vcf64_count!=0)
+countAnalysis.Tum[["Tum.65.VC"]]<- sum(comparisonTum_annotated$vcf65_count!=0)
+countAnalysis.Tum[["Tum.66.VC"]]<- sum(comparisonTum_annotated$vcf66_count!=0)
+countAnalysis.Tum[["Tum.67.VC"]]<- sum(comparisonTum_annotated$vcf67_count!=0)
+countAnalysis.Tum[["Tum.62.VC.count"]]<- sum(comparisonTum_annotated$vcf62_count)
+countAnalysis.Tum[["Tum.63.VC.count"]]<- sum(comparisonTum_annotated$vcf63_count)
+countAnalysis.Tum[["Tum.64.VC.count"]]<- sum(comparisonTum_annotated$vcf64_count)
+countAnalysis.Tum[["Tum.65.VC.count"]]<- sum(comparisonTum_annotated$vcf65_count)
+countAnalysis.Tum[["Tum.66.VC.count"]]<- sum(comparisonTum_annotated$vcf66_count)
+countAnalysis.Tum[["Tum.67.VC.count"]]<- sum(comparisonTum_annotated$vcf67_count)
+   #amount of regions with VCs of each impact
+   countAnalysis.Tum[["Tum.62.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf62_impact)))
+   countAnalysis.Tum[["Tum.63.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf63_impact)))
+   countAnalysis.Tum[["Tum.64.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf64_impact)))
+   countAnalysis.Tum[["Tum.65.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf65_impact)))
+   countAnalysis.Tum[["Tum.66.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf66_impact)))
+   countAnalysis.Tum[["Tum.67.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf67_impact)))
+
+   #amount of regions with indel VCs
+   countAnalysis.Tum[["Tum.62.VC.indel"]]<- sum(comparisonTum_annotated$vcf62_indel) 
+   countAnalysis.Tum[["Tum.63.VC.indel"]]<- sum(comparisonTum_annotated$vcf63_indel)
+   countAnalysis.Tum[["Tum.64.VC.indel"]]<- sum(comparisonTum_annotated$vcf64_indel)
+   countAnalysis.Tum[["Tum.65.VC.indel"]]<- sum(comparisonTum_annotated$vcf65_indel) 
+   countAnalysis.Tum[["Tum.66.VC.indel"]]<- sum(comparisonTum_annotated$vcf66_indel)
+   countAnalysis.Tum[["Tum.67.VC.indel"]]<- sum(comparisonTum_annotated$vcf67_indel)
+   #amount of regions with SNP VCs
+   countAnalysis.Tum[["Tum.62.VC.snp"]]<- sum(comparisonTum_annotated$vcf62_snp) 
+   countAnalysis.Tum[["Tum.63.VC.snp"]]<- sum(comparisonTum_annotated$vcf63_snp)
+   countAnalysis.Tum[["Tum.64.VC.snp"]]<- sum(comparisonTum_annotated$vcf64_snp)
+   countAnalysis.Tum[["Tum.65.VC.snp"]]<- sum(comparisonTum_annotated$vcf65_snp) 
+   countAnalysis.Tum[["Tum.66.VC.snp"]]<- sum(comparisonTum_annotated$vcf66_snp)
+   countAnalysis.Tum[["Tum.67.VC.snp"]]<- sum(comparisonTum_annotated$vcf67_snp)
+   #amount of regions with homozygous VCs
+   countAnalysis.Tum[["Tum.62.VC.homo"]]<- sum(comparisonTum_annotated$vcf62_homo) 
+   countAnalysis.Tum[["Tum.63.VC.homo"]]<- sum(comparisonTum_annotated$vcf63_homo)
+   countAnalysis.Tum[["Tum.64.VC.homo"]]<- sum(comparisonTum_annotated$vcf64_homo)
+   countAnalysis.Tum[["Tum.65.VC.homo"]]<- sum(comparisonTum_annotated$vcf65_homo) 
+   countAnalysis.Tum[["Tum.66.VC.homo"]]<- sum(comparisonTum_annotated$vcf66_homo)
+   countAnalysis.Tum[["Tum.67.VC.homo"]]<- sum(comparisonTum_annotated$vcf67_homo)
+   #amount of regions with heterozygous VCs
+   countAnalysis.Tum[["Tum.62.VC.het"]]<- sum(comparisonTum_annotated$vcf62_het) 
+   countAnalysis.Tum[["Tum.63.VC.het"]]<- sum(comparisonTum_annotated$vcf63_het)
+   countAnalysis.Tum[["Tum.64.VC.het"]]<- sum(comparisonTum_annotated$vcf64_het)
+   countAnalysis.Tum[["Tum.65.VC.het"]]<- sum(comparisonTum_annotated$vcf65_het) 
+   countAnalysis.Tum[["Tum.66.VC.het"]]<- sum(comparisonTum_annotated$vcf66_het)
+   countAnalysis.Tum[["Tum.67.VC.het"]]<- sum(comparisonTum_annotated$vcf67_het)
+   #amount of regions with known coding VCs
+   countAnalysis.Tum[["Tum.62.VC.coding"]]<- sum(comparisonTum_annotated$vcf62_coding) 
+   countAnalysis.Tum[["Tum.63.VC.coding"]]<- sum(comparisonTum_annotated$vcf63_coding)
+   countAnalysis.Tum[["Tum.64.VC.coding"]]<- sum(comparisonTum_annotated$vcf64_coding)
+   countAnalysis.Tum[["Tum.65.VC.coding"]]<- sum(comparisonTum_annotated$vcf65_coding) 
+   countAnalysis.Tum[["Tum.66.VC.coding"]]<- sum(comparisonTum_annotated$vcf66_coding)
+   countAnalysis.Tum[["Tum.67.VC.coding"]]<- sum(comparisonTum_annotated$vcf67_coding)
+   #amount of regions with known non-coding VCs
+   countAnalysis.Tum[["Tum.62.VC.noncoding"]]<- sum(comparisonTum_annotated$vcf62_noncoding) 
+   countAnalysis.Tum[["Tum.63.VC.noncoding"]]<- sum(comparisonTum_annotated$vcf63_noncoding)
+   countAnalysis.Tum[["Tum.64.VC.noncoding"]]<- sum(comparisonTum_annotated$vcf64_noncoding)
+   countAnalysis.Tum[["Tum.65.VC.noncoding"]]<- sum(comparisonTum_annotated$vcf65_noncoding) 
+   countAnalysis.Tum[["Tum.66.VC.noncoding"]]<- sum(comparisonTum_annotated$vcf66_noncoding)
+   countAnalysis.Tum[["Tum.67.VC.noncoding"]]<- sum(comparisonTum_annotated$vcf67_noncoding)
+   
+#amount of regions with histone mod signals
+countAnalysis.Tum[["Tum.62.HM.active"]]<- sum(as.logical(comparisonTum_annotated$X62_H3K27ac) | as.logical(comparisonTum_annotated$X62_H3K36me3) | as.logical(comparisonTum_annotated$X62_H3K4me1) | as.logical(comparisonTum_annotated$X62_H3K4me3))
+countAnalysis.Tum[["Tum.62.HM.repressive"]]<- sum(as.logical(comparisonTum_annotated$X62_H3K27me3) | as.logical(comparisonTum_annotated$X62_H3K9me3))
+countAnalysis.Tum[["Tum.62.HM.H3K27ac"]]<- sum(comparisonTum_annotated$X62_H3K27ac)
+countAnalysis.Tum[["Tum.62.HM.H3K27me3"]]<- sum(comparisonTum_annotated$X62_H3K27me3)
+countAnalysis.Tum[["Tum.62.HM.H3K36me3"]]<- sum(comparisonTum_annotated$X62_H3K36me3)
+countAnalysis.Tum[["Tum.62.HM.H3K4me1"]]<- sum(comparisonTum_annotated$X62_H3K4me1)
+countAnalysis.Tum[["Tum.62.HM.H3K4me3"]]<- sum(comparisonTum_annotated$X62_H3K4me3)
+countAnalysis.Tum[["Tum.62.HM.H3K9me3"]]<- sum(comparisonTum_annotated$X62_H3K9me3)
+countAnalysis.Tum[["Tum.63.HM.active"]]<- sum(as.logical(comparisonTum_annotated$X63_H3K27ac) | as.logical(comparisonTum_annotated$X63_H3K36me3) | as.logical(comparisonTum_annotated$X63_H3K4me1) | as.logical(comparisonTum_annotated$X63_H3K4me3))
+countAnalysis.Tum[["Tum.63.HM.repressive"]]<- sum(as.logical(comparisonTum_annotated$X63_H3K27me3) | as.logical(comparisonTum_annotated$X63_H3K9me3))
+countAnalysis.Tum[["Tum.63.HM.H3K27ac"]]<- sum(comparisonTum_annotated$X63_H3K27ac)
+countAnalysis.Tum[["Tum.63.HM.H3K27me3"]]<- sum(comparisonTum_annotated$X63_H3K27me3)
+countAnalysis.Tum[["Tum.63.HM.H3K36me3"]]<- sum(comparisonTum_annotated$X63_H3K36me3)
+countAnalysis.Tum[["Tum.63.HM.H3K4me1"]]<- sum(comparisonTum_annotated$X63_H3K4me1)
+countAnalysis.Tum[["Tum.63.HM.H3K4me3"]]<- sum(comparisonTum_annotated$X63_H3K4me3)
+countAnalysis.Tum[["Tum.63.HM.H3K9me3"]]<- sum(comparisonTum_annotated$X63_H3K9me3)
+countAnalysis.Tum[["Tum.64.HM.active"]]<- sum(as.logical(comparisonTum_annotated$X64_H3K27ac) | as.logical(comparisonTum_annotated$X64_H3K36me3) | as.logical(comparisonTum_annotated$X64_H3K4me1) | as.logical(comparisonTum_annotated$X64_H3K4me3))
+countAnalysis.Tum[["Tum.64.HM.repressive"]]<- sum(as.logical(comparisonTum_annotated$X64_H3K27me3) | as.logical(comparisonTum_annotated$X64_H3K9me3))
+countAnalysis.Tum[["Tum.64.HM.H3K27ac"]]<- sum(comparisonTum_annotated$X64_H3K27ac)
+countAnalysis.Tum[["Tum.64.HM.H3K27me3"]]<- sum(comparisonTum_annotated$X64_H3K27me3)
+countAnalysis.Tum[["Tum.64.HM.H3K36me3"]]<- sum(comparisonTum_annotated$X64_H3K36me3)
+countAnalysis.Tum[["Tum.64.HM.H3K4me1"]]<- sum(comparisonTum_annotated$X64_H3K4me1)
+countAnalysis.Tum[["Tum.64.HM.H3K4me3"]]<- sum(comparisonTum_annotated$X64_H3K4me3)
+countAnalysis.Tum[["Tum.64.HM.H3K9me3"]]<- sum(comparisonTum_annotated$X64_H3K9me3)
+countAnalysis.Tum[["Tum.65.HM.active"]]<- sum(as.logical(comparisonTum_annotated$X65_H3K27ac) | as.logical(comparisonTum_annotated$X65_H3K36me3) | as.logical(comparisonTum_annotated$X65_H3K4me1) | as.logical(comparisonTum_annotated$X65_H3K4me3))
+countAnalysis.Tum[["Tum.65.HM.repressive"]]<- sum(as.logical(comparisonTum_annotated$X65_H3K27me3) | as.logical(comparisonTum_annotated$X65_H3K9me3))
+countAnalysis.Tum[["Tum.65.HM.H3K27ac"]]<- sum(comparisonTum_annotated$X65_H3K27ac)
+countAnalysis.Tum[["Tum.65.HM.H3K27me3"]]<- sum(comparisonTum_annotated$X65_H3K27me3)
+countAnalysis.Tum[["Tum.65.HM.H3K36me3"]]<- sum(comparisonTum_annotated$X65_H3K36me3)
+countAnalysis.Tum[["Tum.65.HM.H3K4me1"]]<- sum(comparisonTum_annotated$X65_H3K4me1)
+countAnalysis.Tum[["Tum.65.HM.H3K4me3"]]<- sum(comparisonTum_annotated$X65_H3K4me3)
+countAnalysis.Tum[["Tum.65.HM.H3K9me3"]]<- sum(comparisonTum_annotated$X65_H3K9me3)
+countAnalysis.Tum[["Tum.66.HM.active"]]<- sum(as.logical(comparisonTum_annotated$X66_H3K27ac) | as.logical(comparisonTum_annotated$X66_H3K36me3) | as.logical(comparisonTum_annotated$X66_H3K4me1) | as.logical(comparisonTum_annotated$X66_H3K4me3))
+countAnalysis.Tum[["Tum.66.HM.repressive"]]<- sum(as.logical(comparisonTum_annotated$X66_H3K27me3) | as.logical(comparisonTum_annotated$X66_H3K9me3))
+countAnalysis.Tum[["Tum.66.HM.H3K27ac"]]<- sum(comparisonTum_annotated$X66_H3K27ac)
+countAnalysis.Tum[["Tum.66.HM.H3K27me3"]]<- sum(comparisonTum_annotated$X66_H3K27me3)
+countAnalysis.Tum[["Tum.66.HM.H3K36me3"]]<- sum(comparisonTum_annotated$X66_H3K36me3)
+countAnalysis.Tum[["Tum.66.HM.H3K4me1"]]<- sum(comparisonTum_annotated$X66_H3K4me1)
+countAnalysis.Tum[["Tum.66.HM.H3K4me3"]]<- sum(comparisonTum_annotated$X66_H3K4me3)
+countAnalysis.Tum[["Tum.66.HM.H3K9me3"]]<- sum(comparisonTum_annotated$X66_H3K9me3)
+countAnalysis.Tum[["Tum.67.HM.active"]]<- sum(as.logical(comparisonTum_annotated$X67_H3K27ac) | as.logical(comparisonTum_annotated$X67_H3K36me3) | as.logical(comparisonTum_annotated$X67_H3K4me1) | as.logical(comparisonTum_annotated$X67_H3K4me3))
+countAnalysis.Tum[["Tum.67.HM.repressive"]]<- sum(as.logical(comparisonTum_annotated$X67_H3K27me3) | as.logical(comparisonTum_annotated$X67_H3K9me3))
+countAnalysis.Tum[["Tum.67.HM.H3K27ac"]]<- sum(comparisonTum_annotated$X67_H3K27ac)
+countAnalysis.Tum[["Tum.67.HM.H3K27me3"]]<- sum(comparisonTum_annotated$X67_H3K27me3)
+countAnalysis.Tum[["Tum.67.HM.H3K36me3"]]<- sum(comparisonTum_annotated$X67_H3K36me3)
+countAnalysis.Tum[["Tum.67.HM.H3K4me1"]]<- sum(comparisonTum_annotated$X67_H3K4me1)
+countAnalysis.Tum[["Tum.67.HM.H3K4me3"]]<- sum(comparisonTum_annotated$X67_H3K4me3)
+countAnalysis.Tum[["Tum.67.HM.H3K9me3"]]<- sum(comparisonTum_annotated$X67_H3K9me3)
+
+
+#Colocalization measurements between DMRs and VCs
+#amount of DMRs with VCs for each sample. DMR defined as value 1 or 0.8.
+countAnalysis.Tum[["Tum.62.DMR.is1.pos.VC"]]<- sum(comparisonTum_annotated$DMR62==1 & comparisonTum_annotated$vcf62_count!=0)
+countAnalysis.Tum[["Tum.63.DMR.is1.pos.VC"]]<- sum(comparisonTum_annotated$DMR63==1 & comparisonTum_annotated$vcf63_count!=0)
+countAnalysis.Tum[["Tum.64.DMR.is1.pos.VC"]]<- sum(comparisonTum_annotated$DMR64==1 & comparisonTum_annotated$vcf64_count!=0)
+countAnalysis.Tum[["Tum.65.DMR.is1.pos.VC"]]<- sum(comparisonTum_annotated$DMR65==1 & comparisonTum_annotated$vcf65_count!=0)
+countAnalysis.Tum[["Tum.66.DMR.is1.pos.VC"]]<- sum(comparisonTum_annotated$DMR66==1 & comparisonTum_annotated$vcf66_count!=0)
+countAnalysis.Tum[["Tum.67.DMR.is1.pos.VC"]]<- sum(comparisonTum_annotated$DMR67==1 & comparisonTum_annotated$vcf67_count!=0)
+countAnalysis.Tum[["Tum.62.DMR.is1.neg.VC"]]<- sum(comparisonTum_annotated$DMR62==-1 & comparisonTum_annotated$vcf62_count!=0)
+countAnalysis.Tum[["Tum.63.DMR.is1.neg.VC"]]<- sum(comparisonTum_annotated$DMR63==-1 & comparisonTum_annotated$vcf63_count!=0)
+countAnalysis.Tum[["Tum.64.DMR.is1.neg.VC"]]<- sum(comparisonTum_annotated$DMR64==-1 & comparisonTum_annotated$vcf64_count!=0)
+countAnalysis.Tum[["Tum.65.DMR.is1.neg.VC"]]<- sum(comparisonTum_annotated$DMR65==-1 & comparisonTum_annotated$vcf65_count!=0)
+countAnalysis.Tum[["Tum.66.DMR.is1.neg.VC"]]<- sum(comparisonTum_annotated$DMR66==-1 & comparisonTum_annotated$vcf66_count!=0)
+countAnalysis.Tum[["Tum.67.DMR.is1.neg.VC"]]<- sum(comparisonTum_annotated$DMR67==-1 & comparisonTum_annotated$vcf67_count!=0)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos.VC"]]<- sum(comparisonTum_annotated$DMR62>0.8 & comparisonTum_annotated$vcf62_count!=0)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos.VC"]]<- sum(comparisonTum_annotated$DMR63>0.8 & comparisonTum_annotated$vcf63_count!=0)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos.VC"]]<- sum(comparisonTum_annotated$DMR64>0.8 & comparisonTum_annotated$vcf64_count!=0)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos.VC"]]<- sum(comparisonTum_annotated$DMR65>0.8 & comparisonTum_annotated$vcf65_count!=0)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos.VC"]]<- sum(comparisonTum_annotated$DMR66>0.8 & comparisonTum_annotated$vcf66_count!=0)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos.VC"]]<- sum(comparisonTum_annotated$DMR67>0.8 & comparisonTum_annotated$vcf67_count!=0)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg.VC"]]<- sum(comparisonTum_annotated$DMR62<(-0.8) & comparisonTum_annotated$vcf62_count!=0)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg.VC"]]<- sum(comparisonTum_annotated$DMR63<(-0.8) & comparisonTum_annotated$vcf63_count!=0)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg.VC"]]<- sum(comparisonTum_annotated$DMR64<(-0.8) & comparisonTum_annotated$vcf64_count!=0)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg.VC"]]<- sum(comparisonTum_annotated$DMR65<(-0.8) & comparisonTum_annotated$vcf65_count!=0)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg.VC"]]<- sum(comparisonTum_annotated$DMR66<(-0.8) & comparisonTum_annotated$vcf66_count!=0)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg.VC"]]<- sum(comparisonTum_annotated$DMR67<(-0.8) & comparisonTum_annotated$vcf67_count!=0)
+#amount of DMRs with VCs for each sample in CGI context. DMR defined as value 1 or 0.8.
+countAnalysis.Tum[["Tum.62.DMR.is1.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR62==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf62_count!=0)
+countAnalysis.Tum[["Tum.63.DMR.is1.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR63==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf63_count!=0)
+countAnalysis.Tum[["Tum.64.DMR.is1.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR64==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf64_count!=0)
+countAnalysis.Tum[["Tum.65.DMR.is1.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR65==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf65_count!=0)
+countAnalysis.Tum[["Tum.66.DMR.is1.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR66==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf66_count!=0)
+countAnalysis.Tum[["Tum.67.DMR.is1.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR67==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf67_count!=0)
+countAnalysis.Tum[["Tum.62.DMR.is1.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR62==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf62_count!=0)
+countAnalysis.Tum[["Tum.63.DMR.is1.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR63==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf63_count!=0)
+countAnalysis.Tum[["Tum.64.DMR.is1.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR64==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf64_count!=0)
+countAnalysis.Tum[["Tum.65.DMR.is1.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR65==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf65_count!=0)
+countAnalysis.Tum[["Tum.66.DMR.is1.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR66==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf66_count!=0)
+countAnalysis.Tum[["Tum.67.DMR.is1.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR67==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf67_count!=0)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR62>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf62_count!=0)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR63>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf63_count!=0)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR64>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf64_count!=0)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR65>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf65_count!=0)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR66>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf66_count!=0)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos.VC.CGI"]]<- sum(comparisonTum_annotated$DMR67>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf67_count!=0)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR62<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf62_count!=0)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR63<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf63_count!=0)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR64<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf64_count!=0)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR65<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf65_count!=0)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR66<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf66_count!=0)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg.VC.CGI"]]<- sum(comparisonTum_annotated$DMR67<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf67_count!=0)
+#amount of DMRs with VCs for each sample, split by impact of mutation. DMR defined as value 1 or 0.8.
+countAnalysis.Tum[["Tum.62.DMR.is1.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf62_impact)) & comparisonTum_annotated$DMR62==1)
+countAnalysis.Tum[["Tum.63.DMR.is1.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf63_impact)) & comparisonTum_annotated$DMR63==1)
+countAnalysis.Tum[["Tum.64.DMR.is1.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf64_impact)) & comparisonTum_annotated$DMR64==1)
+countAnalysis.Tum[["Tum.65.DMR.is1.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf65_impact)) & comparisonTum_annotated$DMR65==1)
+countAnalysis.Tum[["Tum.66.DMR.is1.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf66_impact)) & comparisonTum_annotated$DMR66==1)
+countAnalysis.Tum[["Tum.67.DMR.is1.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf67_impact)) & comparisonTum_annotated$DMR67==1)
+countAnalysis.Tum[["Tum.62.DMR.is1.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf62_impact)) & comparisonTum_annotated$DMR62==-1)
+countAnalysis.Tum[["Tum.63.DMR.is1.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf63_impact)) & comparisonTum_annotated$DMR63==-1)
+countAnalysis.Tum[["Tum.64.DMR.is1.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf64_impact)) & comparisonTum_annotated$DMR64==-1)
+countAnalysis.Tum[["Tum.65.DMR.is1.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf65_impact)) & comparisonTum_annotated$DMR65==-1)
+countAnalysis.Tum[["Tum.66.DMR.is1.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf66_impact)) & comparisonTum_annotated$DMR66==-1)
+countAnalysis.Tum[["Tum.67.DMR.is1.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf67_impact)) & comparisonTum_annotated$DMR67==-1)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf62_impact)) & comparisonTum_annotated$DMR62>0.8)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf63_impact)) & comparisonTum_annotated$DMR63>0.8)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf64_impact)) & comparisonTum_annotated$DMR64>0.8)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf65_impact)) & comparisonTum_annotated$DMR65>0.8)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf66_impact)) & comparisonTum_annotated$DMR66>0.8)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf67_impact)) & comparisonTum_annotated$DMR67>0.8)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf62_impact)) & comparisonTum_annotated$DMR62<(-0.8))
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf63_impact)) & comparisonTum_annotated$DMR63<(-0.8))
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf64_impact)) & comparisonTum_annotated$DMR64<(-0.8))
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf65_impact)) & comparisonTum_annotated$DMR65<(-0.8))
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf66_impact)) & comparisonTum_annotated$DMR66<(-0.8))
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg.VC.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf67_impact)) & comparisonTum_annotated$DMR67<(-0.8))
+
+#Colocalization measurements between DMRs and VCs
+#amount of DMRs with VCs for each sample. DMR defined as value 1 or 0.8.
+countAnalysis.Tum[["Tum.62.DMR.is1.pos.VC.snp.snp"]]<- sum(comparisonTum_annotated$DMR62==1 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.is1.pos.VC.snp.snp"]]<- sum(comparisonTum_annotated$DMR63==1 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.is1.pos.VC.snp.snp"]]<- sum(comparisonTum_annotated$DMR64==1 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.is1.pos.VC.snp.snp"]]<- sum(comparisonTum_annotated$DMR65==1 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.is1.pos.VC.snp.snp"]]<- sum(comparisonTum_annotated$DMR66==1 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.is1.pos.VC.snp.snp"]]<- sum(comparisonTum_annotated$DMR67==1 & comparisonTum_annotated$vcf67_snp)
+countAnalysis.Tum[["Tum.62.DMR.is1.neg.VC.snp.snp"]]<- sum(comparisonTum_annotated$DMR62==-1 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.is1.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR63==-1 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.is1.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR64==-1 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.is1.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR65==-1 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.is1.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR66==-1 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.is1.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR67==-1 & comparisonTum_annotated$vcf67_snp)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos.VC.snp"]]<- sum(comparisonTum_annotated$DMR62>0.8 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos.VC.snp"]]<- sum(comparisonTum_annotated$DMR63>0.8 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos.VC.snp"]]<- sum(comparisonTum_annotated$DMR64>0.8 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos.VC.snp"]]<- sum(comparisonTum_annotated$DMR65>0.8 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos.VC.snp"]]<- sum(comparisonTum_annotated$DMR66>0.8 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos.VC.snp"]]<- sum(comparisonTum_annotated$DMR67>0.8 & comparisonTum_annotated$vcf67_snp)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR62<(-0.8) & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR63<(-0.8) & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR64<(-0.8) & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR65<(-0.8) & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR66<(-0.8) & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg.VC.snp"]]<- sum(comparisonTum_annotated$DMR67<(-0.8) & comparisonTum_annotated$vcf67_snp)
+#amount of DMRs with VCs for each sample in CGI context. DMR defined as value 1 or 0.8.
+countAnalysis.Tum[["Tum.62.DMR.is1.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR62==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.is1.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR63==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.is1.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR64==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.is1.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR65==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.is1.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR66==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.is1.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR67==1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf67_snp)
+countAnalysis.Tum[["Tum.62.DMR.is1.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR62==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.is1.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR63==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.is1.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR64==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.is1.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR65==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.is1.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR66==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.is1.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR67==-1 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf67_snp)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR62>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR63>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR64>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR65>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR66>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR67>0.8 & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf67_snp)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR62<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR63<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR64<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR65<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR66<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg.VC.snp.CGI"]]<- sum(comparisonTum_annotated$DMR67<(-0.8) & comparisonTum_annotated$is_CGI==1 & comparisonTum_annotated$vcf67_snp)
+#amount of DMRs with VCs for each sample, split by impact of mutation. DMR defined as value 1 or 0.8.
+countAnalysis.Tum[["Tum.62.DMR.is1.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf62_impact)) & comparisonTum_annotated$DMR62==1 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.is1.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf63_impact)) & comparisonTum_annotated$DMR63==1 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.is1.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf64_impact)) & comparisonTum_annotated$DMR64==1 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.is1.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf65_impact)) & comparisonTum_annotated$DMR65==1 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.is1.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf66_impact)) & comparisonTum_annotated$DMR66==1 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.is1.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf67_impact)) & comparisonTum_annotated$DMR67==1 & comparisonTum_annotated$vcf67_snp)
+countAnalysis.Tum[["Tum.62.DMR.is1.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf62_impact)) & comparisonTum_annotated$DMR62==-1 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.is1.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf63_impact)) & comparisonTum_annotated$DMR63==-1 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.is1.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf64_impact)) & comparisonTum_annotated$DMR64==-1 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.is1.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf65_impact)) & comparisonTum_annotated$DMR65==-1 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.is1.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf66_impact)) & comparisonTum_annotated$DMR66==-1 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.is1.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf67_impact)) & comparisonTum_annotated$DMR67==-1 & comparisonTum_annotated$vcf67_snp)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf62_impact)) & comparisonTum_annotated$DMR62>0.8 & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf63_impact)) & comparisonTum_annotated$DMR63>0.8 & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf64_impact)) & comparisonTum_annotated$DMR64>0.8 & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf65_impact)) & comparisonTum_annotated$DMR65>0.8 & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf66_impact)) & comparisonTum_annotated$DMR66>0.8 & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf67_impact)) & comparisonTum_annotated$DMR67>0.8 & comparisonTum_annotated$vcf67_snp)
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf62_impact)) & comparisonTum_annotated$DMR62<(-0.8) & comparisonTum_annotated$vcf62_snp)
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf63_impact)) & comparisonTum_annotated$DMR63<(-0.8) & comparisonTum_annotated$vcf63_snp)
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf64_impact)) & comparisonTum_annotated$DMR64<(-0.8) & comparisonTum_annotated$vcf64_snp)
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf65_impact)) & comparisonTum_annotated$DMR65<(-0.8) & comparisonTum_annotated$vcf65_snp)
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf66_impact)) & comparisonTum_annotated$DMR66<(-0.8) & comparisonTum_annotated$vcf66_snp)
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg.VC.snp.impact"]]<- colSums(sapply(impact, function(x) grepl(sprintf('\\b%s\\b', x), comparisonTum_annotated$vcf67_impact)) & comparisonTum_annotated$DMR67<(-0.8) & comparisonTum_annotated$vcf67_snp)
+
+#Colocalization measurements between DMRs and HMs
+countAnalysis.Tum[["Tum.62.DMR.is1.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR62==1 & (as.logical(comparisonTum_annotated$X62_H3K27ac) | as.logical(comparisonTum_annotated$X62_H3K36me3) | as.logical(comparisonTum_annotated$X62_H3K4me1) | as.logical(comparisonTum_annotated$X62_H3K4me3)))
+countAnalysis.Tum[["Tum.62.DMR.is1.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR62==1 & (as.logical(comparisonTum_annotated$X62_H3K27me3) | as.logical(comparisonTum_annotated$X62_H3K9me3)))
+countAnalysis.Tum[["Tum.63.DMR.is1.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR63==1 & (as.logical(comparisonTum_annotated$X63_H3K27ac) | as.logical(comparisonTum_annotated$X63_H3K36me3) | as.logical(comparisonTum_annotated$X63_H3K4me1) | as.logical(comparisonTum_annotated$X63_H3K4me3)))
+countAnalysis.Tum[["Tum.63.DMR.is1.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR63==1 & (as.logical(comparisonTum_annotated$X63_H3K27me3) | as.logical(comparisonTum_annotated$X63_H3K9me3)))
+countAnalysis.Tum[["Tum.64.DMR.is1.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR64==1 & (as.logical(comparisonTum_annotated$X64_H3K27ac) | as.logical(comparisonTum_annotated$X64_H3K36me3) | as.logical(comparisonTum_annotated$X64_H3K4me1) | as.logical(comparisonTum_annotated$X64_H3K4me3)))
+countAnalysis.Tum[["Tum.64.DMR.is1.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR64==1 & (as.logical(comparisonTum_annotated$X64_H3K27me3) | as.logical(comparisonTum_annotated$X64_H3K9me3)))
+countAnalysis.Tum[["Tum.65.DMR.is1.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR65==1 & (as.logical(comparisonTum_annotated$X65_H3K27ac) | as.logical(comparisonTum_annotated$X65_H3K36me3) | as.logical(comparisonTum_annotated$X65_H3K4me1) | as.logical(comparisonTum_annotated$X65_H3K4me3)))
+countAnalysis.Tum[["Tum.65.DMR.is1.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR65==1 & (as.logical(comparisonTum_annotated$X65_H3K27me3) | as.logical(comparisonTum_annotated$X65_H3K9me3)))
+countAnalysis.Tum[["Tum.66.DMR.is1.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR66==1 & (as.logical(comparisonTum_annotated$X66_H3K27ac) | as.logical(comparisonTum_annotated$X66_H3K36me3) | as.logical(comparisonTum_annotated$X66_H3K4me1) | as.logical(comparisonTum_annotated$X66_H3K4me3)))
+countAnalysis.Tum[["Tum.66.DMR.is1.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR66==1 & (as.logical(comparisonTum_annotated$X66_H3K27me3) | as.logical(comparisonTum_annotated$X66_H3K9me3)))
+countAnalysis.Tum[["Tum.67.DMR.is1.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR67==1 & (as.logical(comparisonTum_annotated$X67_H3K27ac) | as.logical(comparisonTum_annotated$X67_H3K36me3) | as.logical(comparisonTum_annotated$X67_H3K4me1) | as.logical(comparisonTum_annotated$X67_H3K4me3)))
+countAnalysis.Tum[["Tum.67.DMR.is1.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR67==1 & (as.logical(comparisonTum_annotated$X67_H3K27me3) | as.logical(comparisonTum_annotated$X67_H3K9me3)))
+countAnalysis.Tum[["Tum.62.DMR.is1.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR62==-1 & (as.logical(comparisonTum_annotated$X62_H3K27ac) | as.logical(comparisonTum_annotated$X62_H3K36me3) | as.logical(comparisonTum_annotated$X62_H3K4me1) | as.logical(comparisonTum_annotated$X62_H3K4me3)))
+countAnalysis.Tum[["Tum.62.DMR.is1.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR62==-1 & (as.logical(comparisonTum_annotated$X62_H3K27me3) | as.logical(comparisonTum_annotated$X62_H3K9me3)))
+countAnalysis.Tum[["Tum.63.DMR.is1.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR63==-1 & (as.logical(comparisonTum_annotated$X63_H3K27ac) | as.logical(comparisonTum_annotated$X63_H3K36me3) | as.logical(comparisonTum_annotated$X63_H3K4me1) | as.logical(comparisonTum_annotated$X63_H3K4me3)))
+countAnalysis.Tum[["Tum.63.DMR.is1.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR63==-1 & (as.logical(comparisonTum_annotated$X63_H3K27me3) | as.logical(comparisonTum_annotated$X63_H3K9me3)))
+countAnalysis.Tum[["Tum.64.DMR.is1.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR64==-1 & (as.logical(comparisonTum_annotated$X64_H3K27ac) | as.logical(comparisonTum_annotated$X64_H3K36me3) | as.logical(comparisonTum_annotated$X64_H3K4me1) | as.logical(comparisonTum_annotated$X64_H3K4me3)))
+countAnalysis.Tum[["Tum.64.DMR.is1.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR64==-1 & (as.logical(comparisonTum_annotated$X64_H3K27me3) | as.logical(comparisonTum_annotated$X64_H3K9me3)))
+countAnalysis.Tum[["Tum.65.DMR.is1.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR65==-1 & (as.logical(comparisonTum_annotated$X65_H3K27ac) | as.logical(comparisonTum_annotated$X65_H3K36me3) | as.logical(comparisonTum_annotated$X65_H3K4me1) | as.logical(comparisonTum_annotated$X65_H3K4me3)))
+countAnalysis.Tum[["Tum.65.DMR.is1.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR65==-1 & (as.logical(comparisonTum_annotated$X65_H3K27me3) | as.logical(comparisonTum_annotated$X65_H3K9me3)))
+countAnalysis.Tum[["Tum.66.DMR.is1.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR66==-1 & (as.logical(comparisonTum_annotated$X66_H3K27ac) | as.logical(comparisonTum_annotated$X66_H3K36me3) | as.logical(comparisonTum_annotated$X66_H3K4me1) | as.logical(comparisonTum_annotated$X66_H3K4me3)))
+countAnalysis.Tum[["Tum.66.DMR.is1.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR66==-1 & (as.logical(comparisonTum_annotated$X66_H3K27me3) | as.logical(comparisonTum_annotated$X66_H3K9me3)))
+countAnalysis.Tum[["Tum.67.DMR.is1.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR67==-1 & (as.logical(comparisonTum_annotated$X67_H3K27ac) | as.logical(comparisonTum_annotated$X67_H3K36me3) | as.logical(comparisonTum_annotated$X67_H3K4me1) | as.logical(comparisonTum_annotated$X67_H3K4me3)))
+countAnalysis.Tum[["Tum.67.DMR.is1.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR67==-1 & (as.logical(comparisonTum_annotated$X67_H3K27me3) | as.logical(comparisonTum_annotated$X67_H3K9me3)))
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR62>0.8 & (as.logical(comparisonTum_annotated$X62_H3K27ac) | as.logical(comparisonTum_annotated$X62_H3K36me3) | as.logical(comparisonTum_annotated$X62_H3K4me1) | as.logical(comparisonTum_annotated$X62_H3K4me3)))
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR62>0.8 & (as.logical(comparisonTum_annotated$X62_H3K27me3) | as.logical(comparisonTum_annotated$X62_H3K9me3)))
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR63>0.8 & (as.logical(comparisonTum_annotated$X63_H3K27ac) | as.logical(comparisonTum_annotated$X63_H3K36me3) | as.logical(comparisonTum_annotated$X63_H3K4me1) | as.logical(comparisonTum_annotated$X63_H3K4me3)))
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR63>0.8 & (as.logical(comparisonTum_annotated$X63_H3K27me3) | as.logical(comparisonTum_annotated$X63_H3K9me3)))
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR64>0.8 & (as.logical(comparisonTum_annotated$X64_H3K27ac) | as.logical(comparisonTum_annotated$X64_H3K36me3) | as.logical(comparisonTum_annotated$X64_H3K4me1) | as.logical(comparisonTum_annotated$X64_H3K4me3)))
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR64>0.8 & (as.logical(comparisonTum_annotated$X64_H3K27me3) | as.logical(comparisonTum_annotated$X64_H3K9me3)))
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR65>0.8 & (as.logical(comparisonTum_annotated$X65_H3K27ac) | as.logical(comparisonTum_annotated$X65_H3K36me3) | as.logical(comparisonTum_annotated$X65_H3K4me1) | as.logical(comparisonTum_annotated$X65_H3K4me3)))
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR65>0.8 & (as.logical(comparisonTum_annotated$X65_H3K27me3) | as.logical(comparisonTum_annotated$X65_H3K9me3)))
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR66>0.8 & (as.logical(comparisonTum_annotated$X66_H3K27ac) | as.logical(comparisonTum_annotated$X66_H3K36me3) | as.logical(comparisonTum_annotated$X66_H3K4me1) | as.logical(comparisonTum_annotated$X66_H3K4me3)))
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR66>0.8 & (as.logical(comparisonTum_annotated$X66_H3K27me3) | as.logical(comparisonTum_annotated$X66_H3K9me3)))
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos.HM.active"]]<- sum(comparisonTum_annotated$DMR67>0.8 & (as.logical(comparisonTum_annotated$X67_H3K27ac) | as.logical(comparisonTum_annotated$X67_H3K36me3) | as.logical(comparisonTum_annotated$X67_H3K4me1) | as.logical(comparisonTum_annotated$X67_H3K4me3)))
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.pos.HM.repressive"]]<- sum(comparisonTum_annotated$DMR67>0.8 & (as.logical(comparisonTum_annotated$X67_H3K27me3) | as.logical(comparisonTum_annotated$X67_H3K9me3)))
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR62<(-0.8) & (as.logical(comparisonTum_annotated$X62_H3K27ac) | as.logical(comparisonTum_annotated$X62_H3K36me3) | as.logical(comparisonTum_annotated$X62_H3K4me1) | as.logical(comparisonTum_annotated$X62_H3K4me3)))
+countAnalysis.Tum[["Tum.62.DMR.isbigger0.8.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR62<(-0.8) & (as.logical(comparisonTum_annotated$X62_H3K27me3) | as.logical(comparisonTum_annotated$X62_H3K9me3)))
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR63<(-0.8) & (as.logical(comparisonTum_annotated$X63_H3K27ac) | as.logical(comparisonTum_annotated$X63_H3K36me3) | as.logical(comparisonTum_annotated$X63_H3K4me1) | as.logical(comparisonTum_annotated$X63_H3K4me3)))
+countAnalysis.Tum[["Tum.63.DMR.isbigger0.8.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR63<(-0.8) & (as.logical(comparisonTum_annotated$X63_H3K27me3) | as.logical(comparisonTum_annotated$X63_H3K9me3)))
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR64<(-0.8) & (as.logical(comparisonTum_annotated$X64_H3K27ac) | as.logical(comparisonTum_annotated$X64_H3K36me3) | as.logical(comparisonTum_annotated$X64_H3K4me1) | as.logical(comparisonTum_annotated$X64_H3K4me3)))
+countAnalysis.Tum[["Tum.64.DMR.isbigger0.8.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR64<(-0.8) & (as.logical(comparisonTum_annotated$X64_H3K27me3) | as.logical(comparisonTum_annotated$X64_H3K9me3)))
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR65<(-0.8) & (as.logical(comparisonTum_annotated$X65_H3K27ac) | as.logical(comparisonTum_annotated$X65_H3K36me3) | as.logical(comparisonTum_annotated$X65_H3K4me1) | as.logical(comparisonTum_annotated$X65_H3K4me3)))
+countAnalysis.Tum[["Tum.65.DMR.isbigger0.8.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR65<(-0.8) & (as.logical(comparisonTum_annotated$X65_H3K27me3) | as.logical(comparisonTum_annotated$X65_H3K9me3)))
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR66<(-0.8) & (as.logical(comparisonTum_annotated$X66_H3K27ac) | as.logical(comparisonTum_annotated$X66_H3K36me3) | as.logical(comparisonTum_annotated$X66_H3K4me1) | as.logical(comparisonTum_annotated$X66_H3K4me3)))
+countAnalysis.Tum[["Tum.66.DMR.isbigger0.8.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR66<(-0.8) & (as.logical(comparisonTum_annotated$X66_H3K27me3) | as.logical(comparisonTum_annotated$X66_H3K9me3)))
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg.HM.active"]]<- sum(comparisonTum_annotated$DMR67<(-0.8) & (as.logical(comparisonTum_annotated$X67_H3K27ac) | as.logical(comparisonTum_annotated$X67_H3K36me3) | as.logical(comparisonTum_annotated$X67_H3K4me1) | as.logical(comparisonTum_annotated$X67_H3K4me3)))
+countAnalysis.Tum[["Tum.67.DMR.isbigger0.8.neg.HM.repressive"]]<- sum(comparisonTum_annotated$DMR67<(-0.8) & (as.logical(comparisonTum_annotated$X67_H3K27me3) | as.logical(comparisonTum_annotated$X67_H3K9me3)))
+
+#exporting results
+write.table(unlist(countAnalysis.Tum), '/Users/hirstlab/Desktop/Giulio/countAnalysis/count_analysis_tum.csv', append= T, sep=',', row.names=TRUE)
+```
+
