@@ -58,16 +58,23 @@ Datasets from patient AKCC46 are saved in repo as example data.
 - [FindER](http://www.epigenomes.ca/tools-and-software/finder) processes ChIP-Seq data, identifying enrichment from histone modifications.  
 - [BCFtools](https://samtools.github.io/bcftools/bcftools.html) processes WGS data into a list of variant calls (VCF). It also processes VCF files in specific ways, such as contrasting two VCF files to list statistically significant differences in genetic variants.
 
-## Analyses:
+## Analysis
+Analysis, background and results presented in 2018 are under folder [Analyses](https://github.com/GiulioSP/2018Epigenomics/blob/main/Analyses)
 - countAnalysis.plots.xlsx 
 - Lab Meeting - Aug 13th.pptx
 - Lab Meeting - Aug 22.pptx
 - Lab Meeting - July 4th.pptx
 
-![ppt_how](/new_files/ppt_how.PNG)
-![ppt_how](/new_files/ppt_how.png)
-
+### Background
 ![ppt_what](/new_files/ppt_what.PNG)
+![ppt_how](/new_files/ppt_how.PNG)
+![ppt_models](/new_files/ppt_models.PNG)
+![ppt_data_tables](/new_files/ppt_data_tables.PNG)
+![ppt_analysis](/new_files/ppt_analysis.PNG)
 
-![GitHub Logo](/images/github-logo.png)
+
+![ppt_hypomutated](/new_files/ppt_hypomutated.PNG)
+
+
+
 
