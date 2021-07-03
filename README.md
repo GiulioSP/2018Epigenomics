@@ -62,15 +62,16 @@ Datasets from patient AKCC46 are saved in repo as example data.
 Analysis, background and results presented in 2018 are under folder [Analyses](https://github.com/GiulioSP/2018Epigenomics/blob/main/Analyses)
 - countAnalysis.plots.xlsx 
 - Lab Meeting - Aug 13th.pptx
-- Lab Meeting - Aug 22.pptx
+- Lab Meeting - Aug 22nd.pptx
 - Lab Meeting - July 4th.pptx
 
 ### Background
-![ppt_what](/new_files/ppt_what.PNG)
-![ppt_how](/new_files/ppt_how.PNG)
-![ppt_models](/new_files/ppt_models.PNG)
-![ppt_data_tables](/new_files/ppt_data_tables.PNG)
-![ppt_analysis](/new_files/ppt_analysis.PNG)
+Select pages from document "Lab Meeting - Aug 22nd.pptx"
+<kbd> ![ppt_what](/new_files/ppt_what.PNG) </kbd>
+<kbd> ![ppt_how](/new_files/ppt_how.PNG) </kbd>
+<kbd> ![ppt_models](/new_files/ppt_models.PNG) </kbd>
+<kbd> ![ppt_data_tables](/new_files/ppt_data_tables.PNG) </kbd>
+<kbd> ![ppt_analysis](/new_files/ppt_analysis.PNG) </kbd> 
 
 
 ![ppt_hypomutated](/new_files/ppt_hypomutated.PNG)
