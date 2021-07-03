@@ -41,9 +41,7 @@ Datasets from patient AKCC46 are saved in repo as example data.
 - FindER: Absolute measurement of histone modification enrichment detected. Generated from ChIP-Seq data by the CEEHRC's FindER package.  
 - chipByRegion: Original data format that splits the genome into regions and aggregates histone modifications associated with each region. Generated with script finderToChipByRegion.
 
-
 ## Scripts:
-
 ### Analyses in R
 - [count_analysis_P6.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/count_analysis_P6.Rmd): R code that aggregates different types of data by region, then plots comparisons and exports results to a .csv file. Set up for P6 (patient 6 in my analysis, AKCC55). Tweak file names for a different patient's datasets. Used to gleam insights into cancer evolution, by noting epigenetic and genetic factors that are different between normal, tumor adjacent and tumor samples.
 - [count_analysis_tum.Rmd](https://github.com/GiulioSP/2018Epigenomics/blob/main/count_analysis_tum.Rmd): R code that aggregates all data from tumor samples by region, then plots comparisons and exports results to a .csv file. Used to gleam insights into common epigenetic mechanisms in cancer, often associated with deactivation of tumor suppressor genes.
@@ -60,14 +58,12 @@ Datasets from patient AKCC46 are saved in repo as example data.
 - [FindER](http://www.epigenomes.ca/tools-and-software/finder) processes ChIP-Seq data, identifying enrichment from histone modifications.  
 - [BCFtools](https://samtools.github.io/bcftools/bcftools.html) processes WGS data into a list of variant calls (VCF). It also processes VCF files in specific ways, such as contrasting two VCF files to list statistically significant differences in genetic variants.
 
-
 ## Analyses:
 - countAnalysis.plots.xlsx 
 - Lab Meeting - Aug 13th.pptx
 - Lab Meeting - Aug 22.pptx
 - Lab Meeting - July 4th.pptx
 
+[file](/new_files/ppt_how.png)
 
-## Glossary:
-- hg38 -> reference sequence for the human genome, build version 38
-- 
+
