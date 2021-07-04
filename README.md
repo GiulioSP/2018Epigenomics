@@ -96,10 +96,31 @@ As expected, most DMRs (differentially methylated regions) are unique to tumors,
 <kbd> ![ppt_tumdmr3](/new_files/ppt_tumdmr3.PNG) </kbd>
 <kbd> ![ppt_tumdmr4](/new_files/ppt_tumdmr4.PNG) </kbd>
 
-Furthermore, tumors 5 and 6 behave differently as they are undermutated. Since they contain less DMRs than expected, this indicates support to models 1 and 2, where a less mutated sample would have less changes in gene expression and thus less changes in methylation profile (model 1) or less visible genic signals for methylation or demethylation (model 2). 
-<kbd> ![ppt_tumdmr5](/new_files/ppt_tumdmr5.PNG) </kbd>
+Furthermore, tumors 5 and 6 behave differently as they are undermutated. 
+Tumor from P6 contains less DMRs than expected, this indicates support to models 1 and 2, where a less mutated sample would have less changes in gene expression and thus less changes in methylation profile (model 1) or less visible genic signals for methylation or demethylation (model 2). 
 <kbd> ![ppt_tumdmr6](/new_files/ppt_tumdmr6.PNG) </kbd>
 
+Tumor from P5 contains less DMRs, but also a unique distribution between normal, tumor adjacent and tumor samples. This indicates support for model 4, where mutations in genes coding for epigenetic machinery cause global dysruption to the methylome.  
+<kbd> ![ppt_tumdmr5](/new_files/ppt_tumdmr5.PNG) </kbd>
+
+
+#### Colocalization of Genetic and Epigenetic Factors
+These is indeed strong colocalization of epigenetic and genetic variants. These plots consider the DMRs as variations between different samples of the same patient, so they should include few DMRs between normal and tumor adjacent, and consider many regions where the tumor has dysregulated the methylome. This indicates support for model 4, where mutations in genes coding for epigenetic machinery cause global dysruption to the methylome, particularly for causing hypermethylation of the genome.
+Note in data from patients P1 and P6 that both normal and tumor adjacent samples happen to have a similar amount of variant calls tagged as "modifier" in all sample types, but the amount of those that colocalize with DMRs is still small, indicating support for models 1 and 2 in healthy cells, and model 4 in cancer cells.  
+<kbd> ![P1.VC+DMR](/new_files/P1.VC+DMR.PNG) </kbd>
+<kbd> ![P2.VC+DMR](/new_files/P2.VC+DMR.PNG) </kbd>
+<kbd> ![P3.VC+DMR](/new_files/P3.VC+DMR.PNG) </kbd>
+<kbd> ![P4.VC+DMR](/new_files/P4.VC+DMR.PNG) </kbd>
+<kbd> ![P5.VC+DMR](/new_files/P5.VC+DMR.PNG) </kbd>
+<kbd> ![P6.VC+DMR](/new_files/P6.VC+DMR.PNG) </kbd>
+
+The histone modifications are less common, or at least harder to detect with ChIP-Seq compared to methylation signals, but they still show patterns between tumors and other samples. 
+<kbd> ![P1.HM+DMR](/new_files/P1.HM+DMR.PNG) </kbd>
+<kbd> ![P2.HM+DMR](/new_files/P2.HM+DMR.PNG) </kbd>
+<kbd> ![P3.HM+DMR](/new_files/P3.HM+DMR.PNG) </kbd>
+<kbd> ![P4.HM+DMR](/new_files/P4.HM+DMR.PNG) </kbd>
+<kbd> ![P5.HM+DMR](/new_files/P5.HM+DMR.PNG) </kbd>
+<kbd> ![P6.HM+DMR](/new_files/P6.HM+DMR.PNG) </kbd>
 
 
 #### The Cancer's Epigenome
