@@ -104,8 +104,9 @@ Tumor from P5 contains less DMRs, but also a unique distribution between normal,
 <kbd> ![ppt_tumdmr5](/new_files/ppt_tumdmr5.PNG) </kbd>
 
 
-#### Colocalization of Genetic and Epigenetic Factors
+#### Colocalization of Mutations (VC) and Differential Methylation (DMRs)
 These is indeed strong colocalization of epigenetic and genetic variants. These plots consider the DMRs as variations between different samples of the same patient, so they should include few DMRs between normal and tumor adjacent, and consider many regions where the tumor has dysregulated the methylome. This indicates support for model 4, where mutations in genes coding for epigenetic machinery cause global dysruption to the methylome, particularly for causing hypermethylation of the genome.
+
 Note in data from patients P1 and P6 that both normal and tumor adjacent samples happen to have a similar amount of variant calls tagged as "modifier" in all sample types, but the amount of those that colocalize with DMRs is still small, indicating support for models 1 and 2 in healthy cells, and model 4 in cancer cells.  
 <kbd> ![P1.VC+DMR](/new_files/P1.VC+DMR.png) </kbd>
 <kbd> ![P2.VC+DMR](/new_files/P2.VC+DMR.png) </kbd>
@@ -114,7 +115,13 @@ Note in data from patients P1 and P6 that both normal and tumor adjacent samples
 <kbd> ![P5.VC+DMR](/new_files/P5.VC+DMR.png) </kbd>
 <kbd> ![P6.VC+DMR](/new_files/P6.VC+DMR.png) </kbd>
 
+#### Colocalization of Histone Modifications (HM) and Differential Methylation (DMRs) 
 The histone modifications are less common, or at least harder to detect with ChIP-Seq compared to methylation signals, but they still show patterns between tumors and other samples. 
+
+Firstly, the absolute amount of histone markers seems to be comparable across sample types for any given patient. 
+<kbd> ![ppt_hist](/new_files/ppt_hist.PNG) </kbd>
+
+In particular, the combination of hypermethylation and repressive histone marks is particularly rare in normal samples and very common in tumor samples, perhaps because a hypermethylated region is most commonly a CGI in normal samples that is hypermethylated in the tumor cell thus deactiating the gene. Furthermore, the most common association of hypermethylation with repressive histone marks and hypomethylation with active histone marks is normal, so at least some of the epigenetic machinery seems to be preserved. This suggests that the histone markers may be responding to the methylation profile.    
 <kbd> ![P1.HM+DMR](/new_files/P1.HM+DMR.png) </kbd>
 <kbd> ![P2.HM+DMR](/new_files/P2.HM+DMR.png) </kbd>
 <kbd> ![P3.HM+DMR](/new_files/P3.HM+DMR.png) </kbd>
