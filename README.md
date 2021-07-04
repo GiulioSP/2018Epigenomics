@@ -112,7 +112,6 @@ Note in data from patients P1 and P6 that both normal and tumor adjacent samples
 <kbd> ![P2.VC+DMR](/new_files/P2.VC+DMR.png) </kbd>
 <kbd> ![P3.VC+DMR](/new_files/P3.VC+DMR.png) </kbd>
 <kbd> ![P4.VC+DMR](/new_files/P4.VC+DMR.png) </kbd>
-<kbd> ![P5.VC+DMR](/new_files/P5.VC+DMR.png) </kbd>
 <kbd> ![P6.VC+DMR](/new_files/P6.VC+DMR.png) </kbd>
 
 #### Colocalization of Histone Modifications (HM) and Differential Methylation (DMRs) 
@@ -126,13 +125,33 @@ In particular, the combination of hypermethylation and repressive histone marks 
 <kbd> ![P2.HM+DMR](/new_files/P2.HM+DMR.png) </kbd>
 <kbd> ![P3.HM+DMR](/new_files/P3.HM+DMR.png) </kbd>
 <kbd> ![P4.HM+DMR](/new_files/P4.HM+DMR.png) </kbd>
-<kbd> ![P5.HM+DMR](/new_files/P5.HM+DMR.png) </kbd>
 <kbd> ![P6.HM+DMR](/new_files/P6.HM+DMR.png) </kbd>
 
 
 #### The Cancer's Epigenome
 The amount of DMRs varies by grouping and patient, but the amount of variant regions between cancer samples is small, indicating support to model 4, where mutations in genes coding for epigenetic machinery cause global dysruption to the methylome.  
 <kbd> ![ppt_dmr](/new_files/ppt_dmr.PNG) </kbd>
+
+The profile of dysregulation of the methylome seems to vary between tumors, and may be an indicator of cancer evolution alongside genetic factors. Note how P5 and P6 in particular seem to have fewer hypermethylated regions (expected for hypomutated tumors) but P5 has an incomparable amount of hypomethylated regions. This demonstrates that epimutations may be a missing element to understanding of how hypomutated tumors can survive.
+<kbd> ![Tum.DMR](/new_files/Tum.DMR.png) </kbd>
+
+Furthermore, the variation is unique for CGIs. Note how tumor P1 seems to have a unique profile of CGI hypomethylation, whereas P5 and P6 display CGI hypermethylation. Both observations indicate a dysfunctional epigenetic machinery in these tumors, thus lending support to model 4.
+<kbd> ![Tum.DMR.CGI](/new_files/Tum.DMR.CGI.png) </kbd>
+
+Consider also that variant calls colocalize with DMRs in comparable amounts across samples, which is impressive when considering the drastic hypomutation of samples P5 and P6. Perhaps the interplay between mutations and epimutations may be a more accurate monitor of cancer evolution than only considering genetic mutations.
+<kbd> ![Tum.VC+DMR](/new_files/Tum.VC+DMR.png) </kbd>
+
+Histone markers seem to be comparable across all tumor samples. 
+<kbd> ![Tum.HM](/new_files/Tum.HM.png) </kbd>
+
+However, when observed in colocalizatin with DMRs, we can see that they are not equally distributed as active or repressive marks, and may be responding to specific methylation signals, thus being most visible in the hypomethylation in P5 and hypermethylation in P1. 
+Still, the epigenetic interplay is between active marks with hypomethylation and repressive marks with hypermethylation, which is still normal behavior. 
+<kbd> ![Tum.HM+DMR](/new_files/Tum.HM+DMR.png) </kbd>
+
+
+
+
+
 
 
 
