@@ -91,6 +91,8 @@ As expected, the amount of unique mutations (not in any list of variants within 
 <kbd> ![ppt_tummutation](/new_files/ppt_tummutation.PNG) </kbd>
 
 As expected, most DMRs (differentially methylated regions) are unique to tumors, whereas normal and tumor adjacent samples are most similar. Further, the hypo or hypermethylation profile of DMRs is different for regions considered to be CGIs, as they carry the methylation signal differently. 
+|[]() | |
+| :----: | :----: | 
 |<kbd> ![ppt_tumdmr1](/new_files/ppt_tumdmr1.PNG) </kbd> | <kbd> ![ppt_tumdmr2](/new_files/ppt_tumdmr2.PNG) </kbd> |
 |<kbd> ![ppt_tumdmr3](/new_files/ppt_tumdmr3.PNG) </kbd> | <kbd> ![ppt_tumdmr4](/new_files/ppt_tumdmr4.PNG) </kbd> |
 
@@ -117,6 +119,7 @@ Firstly, the absolute amount of histone markers seems to be comparable across sa
 <kbd> ![ppt_hist](/new_files/ppt_hist.PNG) </kbd>
 
 In particular, the combination of hypermethylation and repressive histone marks is particularly rare in normal samples and very common in tumor samples, perhaps because a hypermethylated region is most commonly a CGI in normal samples that is hypermethylated in the tumor cell thus deactiating the gene. Furthermore, the most common association of hypermethylation with repressive histone marks and hypomethylation with active histone marks is normal, so at least some of the epigenetic machinery seems to be preserved. This suggests that the histone markers may be responding to the methylation profile.    
+
 | <kbd> ![P1.HM+DMR](/new_files/P1.HM+DMR.png) </kbd> | <kbd> ![P2.HM+DMR](/new_files/P2.HM+DMR.png) </kbd> |
 | <kbd> ![P3.HM+DMR](/new_files/P3.HM+DMR.png) </kbd> | <kbd> ![P4.HM+DMR](/new_files/P4.HM+DMR.png) </kbd> |
 | <kbd> ![P6.HM+DMR](/new_files/P6.HM+DMR.png) </kbd> | <kbd> ![P6.HM+DMR](/new_files/P6.HM+DMR.png) </kbd> |
