@@ -62,14 +62,14 @@ Datasets from patient AKCC46 are saved in repo as example data.
 - [FindER](http://www.epigenomes.ca/tools-and-software/finder) processes ChIP-Seq data, identifying enrichment from histone modifications.  
 - [BCFtools](https://samtools.github.io/bcftools/bcftools.html) processes WGS data into a list of variant calls (VCF). It also processes VCF files in specific ways, such as contrasting two VCF files to list statistically significant differences in genetic variants.
 
-## Analysis
+## Analysis Files
 Analysis, background and results presented in 2018 are under folder [Analyses](https://github.com/GiulioSP/2018Epigenomics/blob/main/Analyses)
 - countAnalysis.plots.xlsx 
 - Lab Meeting - Aug 13th.pptx
 - Lab Meeting - Aug 22nd.pptx
 - Lab Meeting - July 4th.pptx
 
-### Background
+## Background
 Select pages from document "Lab Meeting - Aug 22nd.pptx"
 <kbd> ![ppt_what](/new_files/ppt_what.PNG) </kbd>
 <kbd> ![ppt_how](/new_files/ppt_how.PNG) </kbd>
@@ -77,10 +77,9 @@ Select pages from document "Lab Meeting - Aug 22nd.pptx"
 <kbd> ![ppt_data_tables](/new_files/ppt_data_tables.PNG) </kbd>
 <kbd> ![ppt_analysis](/new_files/ppt_analysis.PNG) </kbd> 
 
-### Results
-Select pages from document "Lab Meeting - Aug 22nd.pptx"
+## Results and Discussion
 
-#### Sanity checks and Validation results
+### Sanity checks and Validation results
 
 Tumors of patients  5 and 6 are considered "hypomutated", as they have significantly less variant calls than would be expected, especially considering the biological baseline (the amount of variant calls that are unique between normal and tumor adjacent samples, which may be real mutations or false positives). 
 Hypomutated tumors are worth studying, but their data cannot be compared directly with other samples.
@@ -102,7 +101,7 @@ Tumor from P5 contains less DMRs, but also a unique distribution between normal,
 |<kbd> ![ppt_tumdmr3](/new_files/ppt_tumdmr3.PNG) </kbd> | <kbd> ![ppt_tumdmr4](/new_files/ppt_tumdmr4.PNG) </kbd> |
 |<kbd> ![ppt_tumdmr5](/new_files/ppt_tumdmr5.PNG) </kbd> | <kbd> ![ppt_tumdmr6](/new_files/ppt_tumdmr6.PNG) </kbd> |
 
-#### Colocalization of Mutations (VC) and Differential Methylation (DMRs)
+### Colocalization of Mutations (VC) and Differential Methylation (DMRs)
 These is indeed strong colocalization of epigenetic and genetic variants. These plots consider the DMRs as variations between different samples of the same patient, so they should include few DMRs between normal and tumor adjacent, and consider many regions where the tumor has dysregulated the methylome. This indicates support for model 4, where mutations in genes coding for epigenetic machinery cause global dysruption to the methylome, particularly for causing hypermethylation of the genome.
 
 Note in data from patients P1 and P6 that both normal and tumor adjacent samples happen to have a similar amount of variant calls tagged as "modifier" in all sample types, but the amount of those that colocalize with DMRs is still small, indicating support for models 1 and 2 in healthy cells, and model 4 in cancer cells.  
@@ -112,7 +111,7 @@ Note in data from patients P1 and P6 that both normal and tumor adjacent samples
 | <kbd> ![P3.VC+DMR](/new_files/P3.VC+DMR.png) </kbd> | <kbd> ![P4.VC+DMR](/new_files/P4.VC+DMR.png) </kbd> |
 | <kbd> ![P5.VC+DMR](/new_files/P5.VC+DMR.png) </kbd> | <kbd> ![P6.VC+DMR](/new_files/P6.VC+DMR.png) </kbd> |
 
-#### Colocalization of Histone Modifications (HM) and Differential Methylation (DMRs) 
+### Colocalization of Histone Modifications (HM) and Differential Methylation (DMRs) 
 The histone modifications are less common, or at least harder to detect with ChIP-Seq compared to methylation signals, but they still show patterns between tumors and other samples. 
 
 Firstly, the absolute amount of histone markers seems to be comparable across sample types for any given patient. 
@@ -126,7 +125,7 @@ In particular, the combination of hypermethylation and repressive histone marks 
 | <kbd> ![P6.HM+DMR](/new_files/P6.HM+DMR.png) </kbd> | <kbd> ![P6.HM+DMR](/new_files/P6.HM+DMR.png) </kbd> |
 
 
-#### The Cancer's Epigenome
+### The Cancer's Epigenome
 The amount of DMRs varies by grouping and patient, but the amount of variant regions between cancer samples is small, indicating support to model 4, where mutations in genes coding for epigenetic machinery cause global dysruption to the methylome.  
 <kbd> ![ppt_dmr](/new_files/ppt_dmr.PNG) </kbd>
 
