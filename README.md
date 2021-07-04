@@ -40,7 +40,7 @@ Datasets from patient AKCC46 are saved in repo as example data.
 - CGI: A list of regions considered to be CpG islands in a given genome build (in this case, hg38). These regions are rich in the sequence "CG", which is the most common sequence for a methylated Cytosine; they are usually associated with the upstream of genes and serve a regulatory function, whereas fully methylated CGIs suppress expression (or at least transcription factor binding), and unmethylated CGIs promote expression (or at least allow transcription factor binding).    
 - cgiByREgion: Original data format that splits the genome into small regions and notes if a region is considered to be a CGI.
 
-### Hystone Modification data
+### Histone Modification data
 - ChIP-seq: Sequencing data after a step of chromatin immunoprecipitation (ChIP) that should repress genetic signal of regular DNA and amplify signal near a targeted protein. In this case, the targeted proteins are a set of common histone modifications. 
 - FindER: Absolute measurement of histone modification enrichment detected. Generated from ChIP-Seq data by the CEEHRC's FindER package.  
 - chipByRegion: Original data format that splits the genome into regions and aggregates histone modifications associated with each region. Generated with script finderToChipByRegion.
