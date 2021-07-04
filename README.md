@@ -91,7 +91,6 @@ As expected, the amount of unique mutations (not in any list of variants within 
 <kbd> ![ppt_tummutation](/new_files/ppt_tummutation.PNG) </kbd>
 
 As expected, most DMRs (differentially methylated regions) are unique to tumors, whereas normal and tumor adjacent samples are most similar. Further, the hypo or hypermethylation profile of DMRs is different for regions considered to be CGIs, as they carry the methylation signal differently. 
-|[]() | |
 | :----: | :----: | 
 |<kbd> ![ppt_tumdmr1](/new_files/ppt_tumdmr1.PNG) </kbd> | <kbd> ![ppt_tumdmr2](/new_files/ppt_tumdmr2.PNG) </kbd> |
 |<kbd> ![ppt_tumdmr3](/new_files/ppt_tumdmr3.PNG) </kbd> | <kbd> ![ppt_tumdmr4](/new_files/ppt_tumdmr4.PNG) </kbd> |
