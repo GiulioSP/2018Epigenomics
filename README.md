@@ -31,8 +31,6 @@ Grouping samples by type and patient:
 | AKCC70 | CEMT0066 | CEMT0059 | CEMT0058 | 
 | AKCC55 | CEMT0067 | CEMT0061 | CEMT0060 | 
 
-Datasets from patient AKCC46 are saved in repo as example data.
-
 ## Data types:
 ### Genomic data
 - WGS: Whole genome sequencing raw data.
