@@ -1,7 +1,7 @@
 # 2018Epigenomics
 Late upload of work done in 2018 for the Hirst lab at UBC.
 
-The project consisted of processing data from colorectal cancer samples and analyzing how mutations related to epigenetic mutations, whith the goal of gleaming insights to how epigenetic machinery interprets genetic signals both in healthy and cancer cells.
+The project consisted of processing data from colorectal cancer samples and analyzing how mutations related to epigenetic mutations, whith the goal of gleaming insights into how epigenetic machinery interprets genetic signals in both healthy and cancer cells.
 
 This analysis was achieved by splitting the entire genome of all samples into regions of 400 bps, where one could collate the effects of genetic variant calls (VCs), differential methylation in a region (DMRs), CpG island functionality (CGI) and histone modifications (HMs). This was done because different data types are difficult to synthesize together when the precise meaning of each signal is unknown, and the genomic aparatus in particular has regional effects that cannot be considered out of context. 
 
